@@ -22,9 +22,9 @@ module top_level
    output logic        hdmi_clk_p, hdmi_clk_n //differential hdmi clock
    );
 
-  // shut up those RGBs
-  assign rgb0 = 0;
-  assign rgb1 = 0;
+    // shut up those RGBs
+    assign rgb0 = 0;
+    assign rgb1 = 0;
 
     //have btnd control system reset
     logic sys_rst;
