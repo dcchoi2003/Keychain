@@ -15,7 +15,7 @@ module modulus #(
     );
 
     // Pipeline depth
-    localparam DEPTH = WIDTH;
+    localparam DEPTH = WIDTH - 1;
 
     // Index width
     localparam INDEX_WIDTH = $clog2(DEPTH);
@@ -57,14 +57,14 @@ module modulus #(
                 2'b00: begin
                     // If READY is asserted, switch to the squaring state and load values
                     if (ready_in) begin
-                        state <= 2'b01;
+                        state <= 2'b11;
                         intermediate[0] <= value_in;
                         busy_out <= 1'b1;
                         subtrahend <= modulus_in << (DEPTH - 1);
                     end
                 end
 
-                2'b01: begin                   
+                2'b11: begin                   
                     // Perform subtraction operations
 
                     // Subtract the relevant multiple of the modulus, if necessary
@@ -82,8 +82,14 @@ module modulus #(
                             value_out <= intermediate[index];
                         end
 
-                        // Go to return state
-                        state <= 2'b11;
+                        // Turn off the BUSY signal
+                        busy_out <= 1'b0;
+
+                        // Reset the index
+                        index <= 0;
+
+                        // Return to IDLE
+                        state <= 2'b00;
                     end else begin
                         // Increment the result index
                         index <= index + 1;
@@ -91,19 +97,6 @@ module modulus #(
                         // Update the subtrahend
                         subtrahend <= subtrahend >> 1;
                     end
-                end
-
-                2'b11: begin
-                    // Return result
-
-                    // Turn off the BUSY signal
-                    busy_out <= 1'b0;
-
-                    // Reset the index
-                    index <= 0;
-
-                    // Return to IDLE
-                    state <= 2'b00;
                 end
 
                 // If invalid state, go back to idle
