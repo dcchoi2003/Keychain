@@ -8,7 +8,6 @@ from cocotb.clock import Clock
 from cocotb.triggers import Timer, ClockCycles, RisingEdge, FallingEdge, ReadOnly,with_timeout
 from cocotb.utils import get_sim_time as gst
 from cocotb.runner import get_runner
-from PIL import Image
 
 # utility function to reverse bits:
 def reverse_bits(n,size):
@@ -21,16 +20,23 @@ def reverse_bits(n,size):
 @cocotb.test()
 async def test_a(dut):
 
+    # Start clock
     dut._log.info("Starting...")
     cocotb.start_soon(Clock(dut.clk_in, 10, units="ns").start())
+
+    # Assert reset
     dut.rst_in.value = 1
-    await ClockCycles(dut.clk_in,2)
+    await ClockCycles(dut.clk_in,3)
     dut.rst_in.value = 0
+
+    # ENCODE
     dut.mux.value = 1
     dut.message.value = 3
     dut.public_key.value = 5
     dut.modulus.value = 14
     await ClockCycles(dut.clk_in,5)
+
+    # DECODE
     dut.mux.value = 0
     dut.message.value = 5
     dut.modulus.value = 14
