@@ -36,12 +36,12 @@ async def test_exponent_modulus(dut):
 
     # Evaluate
     dut.value_in.value = 3
-    dut.exponent_in.value = 5
+    dut.exponent_in.value = 8
     dut.modulus_in.value = 14
     dut.ready_in.value = 1
     await RisingEdge(dut.clk_in)
     dut.ready_in.value = 0
-    await ClockCycles(dut.clk_in,25)
+    await ClockCycles(dut.clk_in,100)
 
 def is_runner():
     """Image Sprite Tester."""
