@@ -15,7 +15,7 @@ module modulus #(
     );
 
     // Pipeline depth
-    localparam DEPTH = WIDTH - 1;
+    localparam DEPTH = WIDTH;
 
     // Index width
     localparam INDEX_WIDTH = $clog2(DEPTH);

@@ -38,7 +38,9 @@ module square #(
     logic [1:0] state;
 
     // Modulus block
-    modulus modulus_block (
+    modulus #(
+        .WIDTH(WIDTH)
+    ) modulus_block (
         .clk_in(clk_in),
         .rst_in(rst_in),
         .ready_in(modulus_ready),

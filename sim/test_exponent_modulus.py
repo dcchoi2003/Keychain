@@ -11,9 +11,14 @@ from cocotb.runner import get_runner
 from random import randint
 
 # Max input size
-MAX_INPUT_SIZE = 1023
+MAX_INPUT_SIZE = 65535
+
+# Number of tests
+N = 200
 
 async def test_expmod(dut, base, exponent, modulus):
+    start_time = gst("ns")
+
     print(f"Checking ({base}, {exponent}, {modulus}) ... ", end="")
 
     dut.value_in.value = base
@@ -29,7 +34,11 @@ async def test_expmod(dut, base, exponent, modulus):
 
     assert dut.value_out == pow(base, exponent, modulus)
 
-    print("ok!")
+    cycles = int((gst("ns") - start_time) / 10)
+
+    print(f"OK in {cycles} cycles")
+
+    return cycles
 
 @cocotb.test()
 async def test_exponent_modulus(dut):
@@ -48,15 +57,26 @@ async def test_exponent_modulus(dut):
     await ClockCycles(dut.clk_in,3)
     dut.rst_in.value = 0
 
+    # Keep tally of cycles
+    total_cycles = 0
+
     # Send random data
-    for _ in range(100):
+    for _ in range(N):
         # Generate random numbers
-        base = randint(1, MAX_INPUT_SIZE)
         exponent = randint(1, MAX_INPUT_SIZE)
         modulus = randint(1, MAX_INPUT_SIZE)
+        base = randint(1, modulus)
 
         # See if it calculates it correctly
-        await test_expmod(dut, base, exponent, modulus)
+        total_cycles += await test_expmod(dut, base, exponent, modulus)
+
+    # Average cycles
+    average_cycles = round(total_cycles/N, 2)
+
+    # Average time
+    average_time = round(average_cycles / 1000, 2)
+
+    print(f"Completed {N} tests in {average_cycles} cycles/test ({average_time} us/test)")
 
 def is_runner():
     """Image Sprite Tester."""
