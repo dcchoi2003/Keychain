@@ -10,7 +10,7 @@ module exponent_modulus #(
     input wire [WIDTH-1:0] value_in,
     input wire [WIDTH-1:0] modulus_in,
     input wire [WIDTH-1:0] exponent_in,
-    output logic [2*WIDTH-1:0] value_out,
+    output logic [WIDTH-1:0] value_out,
     output logic busy_out,
     output logic valid_out
     );
@@ -146,47 +146,58 @@ module exponent_modulus #(
                 2'b10: begin
                     // Compute contribution from this index
                     if (exponent_in[index]) begin
-                        running_total <= running_total * intermediate[index];
-                    end
+                        if (!modulus_busy && !modulus_valid) begin
+                            // Update the running product
+                            running_total <= running_total * intermediate[index];
 
-                    // Check if we're done
-                    if (index == DEPTH - 1) begin
-                        // We've already loaded everything into the modulus block
+                            // Calculate modulus to prevent overflow
 
-                        // Trigger the modulus block
-                        modulus_ready <= 1'b1;
+                            // Trigger the modulus block
+                            modulus_ready <= 1'b1;
+                        end else if (modulus_valid) begin
+                            // Update the running total
+                            running_total <= modulus_result;
 
-                        // Switch to returning state
-                        state <= 2'b11;
+                            // Check if we're done
+                            if (index == DEPTH - 1) begin
+                                // Switch to returning state
+                                state <= 2'b11;
+                            end else begin
+                                // Go to the next index
+                                index <= index + 1;
+                            end
+                        end
                     end else begin
-                        // We're not done yet
-
-                        // Increment the index
-                        index <= index + 1;
+                        // Check if we're done
+                        if (index == DEPTH - 1) begin
+                            // Switch to returning state
+                            state <= 2'b11;
+                        end else begin
+                            // Go to the next index
+                            index <= index + 1;
+                        end
                     end
                 end
 
                 // Return
                 2'b11: begin
-                    if (modulus_valid) begin
-                        // We're no longer busy
-                        busy_out <= 1'b0;
+                    // We're no longer busy
+                    busy_out <= 1'b0;
 
-                        // Load result
-                        value_out <= modulus_result;
+                    // Load result
+                    value_out <= exponent_in == 0 ? 1 : modulus_result;
 
-                        // Reset running total
-                        running_total <= 1;
+                    // Reset running total
+                    running_total <= 1;
 
-                        // Reset intermediate
-                        intermediate <= 0;
+                    // Reset intermediate
+                    intermediate <= 0;
 
-                        // Reset index
-                        index <= 0;
+                    // Reset index
+                    index <= 0;
 
-                        // Switch to idle state
-                        state <= 2'b00;
-                    end
+                    // Switch to idle state
+                    state <= 2'b00;
                 end
 
                 // default unnecessary as we've covered every possibility

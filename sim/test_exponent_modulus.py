@@ -8,14 +8,28 @@ from cocotb.clock import Clock
 from cocotb.triggers import Timer, ClockCycles, RisingEdge, FallingEdge, ReadOnly,with_timeout
 from cocotb.utils import get_sim_time as gst
 from cocotb.runner import get_runner
+from random import randint
 
-# utility function to reverse bits:
-def reverse_bits(n,size):
-    reversed_n = 0
-    for i in range(size):
-        reversed_n = (reversed_n << 1) | (n & 1)
-        n >>= 1
-    return reversed_n
+# Max input size
+MAX_INPUT_SIZE = 1023
+
+async def test_expmod(dut, base, exponent, modulus):
+    print(f"Checking ({base}, {exponent}, {modulus}) ... ", end="")
+
+    dut.value_in.value = base
+    dut.exponent_in.value = exponent
+    dut.modulus_in.value = modulus
+    dut.ready_in.value = 1
+    await RisingEdge(dut.clk_in)
+    dut.ready_in.value = 0
+    await RisingEdge(dut.valid_out)
+
+    # Wait another clock cycle
+    await ClockCycles(dut.clk_in, 1)
+
+    assert dut.value_out == pow(base, exponent, modulus)
+
+    print("ok!")
 
 @cocotb.test()
 async def test_exponent_modulus(dut):
@@ -34,25 +48,15 @@ async def test_exponent_modulus(dut):
     await ClockCycles(dut.clk_in,3)
     dut.rst_in.value = 0
 
-    # Evaluate
-    dut.value_in.value = 3
-    dut.exponent_in.value = 5
-    dut.modulus_in.value = 14
-    dut.ready_in.value = 1
-    await RisingEdge(dut.clk_in)
-    dut.ready_in.value = 0
-    await ClockCycles(dut.clk_in,1000)
+    # Send random data
+    for _ in range(100):
+        # Generate random numbers
+        base = randint(1, MAX_INPUT_SIZE)
+        exponent = randint(1, MAX_INPUT_SIZE)
+        modulus = randint(1, MAX_INPUT_SIZE)
 
-    # Evaluate
-    dut.value_in.value = 5
-    dut.exponent_in.value = 6
-    dut.modulus_in.value = 17
-    dut.ready_in.value = 1
-    await RisingEdge(dut.clk_in)
-    dut.ready_in.value = 0
-    await ClockCycles(dut.clk_in,1000)
-
-    
+        # See if it calculates it correctly
+        await test_expmod(dut, base, exponent, modulus)
 
 def is_runner():
     """Image Sprite Tester."""

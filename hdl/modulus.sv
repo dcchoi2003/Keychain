@@ -27,13 +27,13 @@ module modulus #(
     assign valid_out = last_busy && !busy_out;
 
     // Intermediate results register
-    logic [DEPTH-1:0] [WIDTH-1:0] intermediate;
+    logic [DEPTH-1:0] [2*WIDTH-1:0] intermediate;
 
     // Intermediate results index
     logic [INDEX_WIDTH-1:0] index;
 
     // Value to subtract from intermediate
-    logic [2*WIDTH-1:0] subtrahend;
+    logic [WIDTH + DEPTH - 2:0] subtrahend;
 
     // State
     // 00 -> Idle
@@ -48,7 +48,7 @@ module modulus #(
             last_busy <= 1'b0;
             value_out <= 1'b0;
             busy_out <= 1'b0;
-            intermediate <= 32'b0;
+            intermediate <= 0;
             subtrahend <= 0;
             state <= 2'b0;
             index <= 2'b0;
@@ -68,7 +68,7 @@ module modulus #(
                     // Perform subtraction operations
 
                     // Subtract the relevant multiple of the modulus, if necessary
-                    if (intermediate[index] > subtrahend) begin
+                    if (intermediate[index] >= subtrahend) begin
                         intermediate[index + 1] <= intermediate[index] - subtrahend;
                     end else begin
                         intermediate[index + 1] <= intermediate[index];
@@ -87,6 +87,12 @@ module modulus #(
 
                         // Reset the index
                         index <= 0;
+
+                        // Reset the intermediate
+                        intermediate <= 0;
+                        
+                        // Reset the subtrahend
+                        subtrahend <= 0;
 
                         // Return to IDLE
                         state <= 2'b00;
