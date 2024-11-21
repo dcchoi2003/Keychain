@@ -41,7 +41,7 @@ async def test_exponent_modulus(dut):
     dut.ready_in.value = 1
     await RisingEdge(dut.clk_in)
     dut.ready_in.value = 0
-    await ClockCycles(dut.clk_in,30)
+    await ClockCycles(dut.clk_in,1000)
 
     # Evaluate
     dut.value_in.value = 5
@@ -50,7 +50,7 @@ async def test_exponent_modulus(dut):
     dut.ready_in.value = 1
     await RisingEdge(dut.clk_in)
     dut.ready_in.value = 0
-    await ClockCycles(dut.clk_in,30)
+    await ClockCycles(dut.clk_in,1000)
 
     
 
@@ -62,6 +62,7 @@ def is_runner():
     sys.path.append(str(proj_path / "sim" / "model"))
     sources = [proj_path / "hdl" / "exponent_modulus.sv"]
     sources += [proj_path / "hdl" / "modulus.sv"]
+    sources += [proj_path / "hdl" / "square.sv"]
     build_test_args = ["-Wall"]
     parameters = {}
     sys.path.append(str(proj_path / "sim"))

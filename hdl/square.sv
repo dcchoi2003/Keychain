@@ -62,10 +62,11 @@ module square #(
             modulus_ready <= 1'b0;
         end else begin
             case (state)
+                // Idle
                 2'b00: begin
                     // If this block is triggered and is not
                     // currently working, start working
-                    if (ready_in && !busy_out) begin
+                    if (ready_in) begin
                         // We're busy
                         busy_out <= 1'b1;
                         
@@ -74,6 +75,7 @@ module square #(
                     end
                 end
 
+                // Squaring
                 2'b01: begin
                     // Square the value
                     intermediate <= value_in * value_in;
@@ -82,6 +84,7 @@ module square #(
                     state <= 2'b10;
                 end
 
+                // Computing modulus
                 2'b10: begin
                     // All values are already loaded into the modulus block
 
@@ -92,6 +95,7 @@ module square #(
                     state <= 2'b11;
                 end
 
+                // Returning
                 2'b11: begin
                     // Turn off trigger
                     modulus_ready <= 1'b0;
