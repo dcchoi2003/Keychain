@@ -188,6 +188,8 @@ module exponent_modulus #(
                         state <= 2'b00;
                     end
                 end
+
+                // default unnecessary as we've covered every possibility
             endcase
         end
 
