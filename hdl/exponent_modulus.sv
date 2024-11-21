@@ -65,7 +65,9 @@ module exponent_modulus #(
                 busy_out <= 1'b0;
             end else if (busy_out && !modulus_busy && !modulus_ready) begin
                 modulus_ready <= 1'b1;
-            end else if (modulus_ready) begin
+            end
+            
+            if (modulus_ready) begin
                 modulus_ready <= 1'b0;
             end
         end
