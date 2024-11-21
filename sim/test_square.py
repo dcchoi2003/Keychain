@@ -18,7 +18,7 @@ def reverse_bits(n,size):
     return reversed_n
 
 @cocotb.test()
-async def test_exponent_modulus(dut):
+async def test_square(dut):
     # Start clock
     dut._log.info("Starting...")
     cocotb.start_soon(Clock(dut.clk_in, 10, units="ns").start())
@@ -26,7 +26,6 @@ async def test_exponent_modulus(dut):
     # Set all inputs to zero
     dut.value_in.value = 0
     dut.ready_in.value = 0
-    dut.exponent_in.value = 0
     dut.modulus_in.value = 0
 
     # Assert RESET
@@ -36,8 +35,7 @@ async def test_exponent_modulus(dut):
 
     # Evaluate
     dut.value_in.value = 3
-    dut.exponent_in.value = 5
-    dut.modulus_in.value = 14
+    dut.modulus_in.value = 7
     dut.ready_in.value = 1
     await RisingEdge(dut.clk_in)
     dut.ready_in.value = 0
@@ -45,7 +43,6 @@ async def test_exponent_modulus(dut):
 
     # Evaluate
     dut.value_in.value = 5
-    dut.exponent_in.value = 6
     dut.modulus_in.value = 17
     dut.ready_in.value = 1
     await RisingEdge(dut.clk_in)
@@ -60,7 +57,7 @@ def is_runner():
     sim = os.getenv("SIM", "icarus")
     proj_path = Path(__file__).resolve().parent.parent
     sys.path.append(str(proj_path / "sim" / "model"))
-    sources = [proj_path / "hdl" / "exponent_modulus.sv"]
+    sources = [proj_path / "hdl" / "square.sv"]
     sources += [proj_path / "hdl" / "modulus.sv"]
     build_test_args = ["-Wall"]
     parameters = {}
@@ -68,7 +65,7 @@ def is_runner():
     runner = get_runner(sim)
     runner.build(
         sources=sources,
-        hdl_toplevel="exponent_modulus",
+        hdl_toplevel="square",
         always=True,
         build_args=build_test_args,
         parameters=parameters,
@@ -77,8 +74,8 @@ def is_runner():
     )
     run_test_args = []
     runner.test(
-        hdl_toplevel="exponent_modulus",
-        test_module="test_exponent_modulus",
+        hdl_toplevel="square",
+        test_module="test_square",
         test_args=run_test_args,
         waves=True
     )

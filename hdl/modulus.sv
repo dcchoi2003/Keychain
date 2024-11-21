@@ -7,7 +7,7 @@ module modulus #(
     input wire clk_in,
     input wire rst_in,
     input wire ready_in,
-    input wire [WIDTH-1:0] value_in,
+    input wire [2*WIDTH-1:0] value_in,
     input wire [WIDTH-1:0] modulus_in,
     output logic [WIDTH-1:0] value_out,
     output logic busy_out,

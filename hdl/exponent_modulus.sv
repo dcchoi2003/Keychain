@@ -16,7 +16,7 @@ module exponent_modulus #(
     );
 
     // Intermediate result
-    logic [WIDTH-1:0] intermediate;
+    logic [2*WIDTH-1:0] intermediate;
 
     logic last_busy;
 
@@ -41,15 +41,15 @@ module exponent_modulus #(
     logic square_ready, square_busy, square_valid;
 
     // Squaring block
-    square square_block (
-        .clk_in(clk_in),
-        .rst_in(rst_in),
-        .ready_in(square_ready),
-        .value_in(0),
-        .square_out(),
-        .busy_out(square_busy),
-        .valid_out(square_valid)
-    );
+    // square square_block (
+    //     .clk_in(clk_in),
+    //     .rst_in(rst_in),
+    //     .ready_in(square_ready),
+    //     .value_in(0),
+    //     .square_out(),
+    //     .busy_out(square_busy),
+    //     .valid_out(square_valid)
+    // );
 
     always_ff @(posedge clk_in) begin
         if (rst_in) begin
