@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# Vivado build command
+vivado -mode batch -source build-local.tcl

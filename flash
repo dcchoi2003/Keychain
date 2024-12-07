@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# Flash bitstream to FPGA
+openFPGALoader -b arty_s7_50 $1

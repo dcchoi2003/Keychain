@@ -1,0 +1,4 @@
+#!/bin/sh
+# Verification Script
+
+iverilog -i -g2012 $1
