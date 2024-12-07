@@ -1,2 +1,9 @@
 # Simulation results
 /sim_build
+
+# Vivado .jou files & log outputs
+/*.jou
+/*.log
+
+# Simulation __pycache__
+/sim/__pycache__
