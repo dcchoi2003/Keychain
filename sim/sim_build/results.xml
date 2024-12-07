@@ -1,0 +1,6 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1733601227" />
+    <testcase name="test_karatsuba" classname="test_karatsuba" file="/Users/davidchoi/Desktop/6.2050/Keychain/sim/test_karatsuba.py" lineno="20" time="0.3167879581451416" sim_time_ns="1020.001" ratio_time="3219.822514631916" />
+  </testsuite>
+</testsuites>
