@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
-| Date         : Sat Dec  7 15:12:03 2024
+| Date         : Sat Dec  7 15:40:24 2024
 | Host         : joseph-legion5 running 64-bit Linux Mint 22
 | Command      : report_utilization -file obj/post_synth_util.rpt -hierarchical -hierarchical_depth 4
 | Design       : top_level
@@ -19,10 +19,17 @@ Table of Contents
 1. Utilization by Hierarchy
 ---------------------------
 
-+-----------+--------+------------+------------+---------+------+-----+--------+--------+------------+
-|  Instance | Module | Total LUTs | Logic LUTs | LUTRAMs | SRLs | FFs | RAMB36 | RAMB18 | DSP Blocks |
-+-----------+--------+------------+------------+---------+------+-----+--------+--------+------------+
-| top_level |  (top) |          0 |          0 |       0 |    0 |   0 |      0 |      0 |          0 |
-+-----------+--------+------------+------------+---------+------+-----+--------+--------+------------+
++----------------------+------------------+------------+------------+---------+------+------+--------+--------+------------+
+|       Instance       |      Module      | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | DSP Blocks |
++----------------------+------------------+------------+------------+---------+------+------+--------+--------+------------+
+| top_level            |            (top) |       2367 |       2367 |       0 |    0 | 5471 |      0 |      0 |         11 |
+|   (top_level)        |            (top) |          0 |          0 |       0 |    0 |   18 |      0 |      0 |          0 |
+|   expmod             | exponent_modulus |       2367 |       2367 |       0 |    0 | 5453 |      0 |      0 |         11 |
+|     (expmod)         | exponent_modulus |         89 |         89 |       0 |    0 | 1099 |      0 |      0 |          7 |
+|     modulus_block    |          modulus |        982 |        982 |       0 |    0 | 2140 |      0 |      0 |          0 |
+|     square_block     |           square |       1296 |       1296 |       0 |    0 | 2214 |      0 |      0 |          4 |
+|       (square_block) |           square |        387 |        387 |       0 |    0 |   73 |      0 |      0 |          4 |
+|       modulus_block  |        modulus_0 |        909 |        909 |       0 |    0 | 2141 |      0 |      0 |          0 |
++----------------------+------------------+------------+------------+---------+------+------+--------+--------+------------+
 
 
