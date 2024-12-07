@@ -12,7 +12,7 @@ module encoder (
     );
 
 
-    // use N = 14, public key = 5, private key = 11
+    // use N = 14, public key = 5, secret key = 11
 
     logic [31:0] exponent;
 
