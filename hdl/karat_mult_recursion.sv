@@ -8,13 +8,13 @@ parameter num_stages = 8
 )
 (
 // data IOs
-input   logic   [input_size-1:0]    input_1,
-input   logic   [input_size-1:0]    input_2,
+input   wire   [input_size-1:0]    input_1,
+input   wire   [input_size-1:0]    input_2,
 output  logic   [output_size-1:0]    result,
 // control IOs
-input   logic   clk_in,
-input   logic   rst_in,
-input   logic   enable,
+input   wire   clk_in,
+input   wire   rst_in,
+input   wire   enable,
 output  logic   o_finish
 );
 
