@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-module shitty_square #(
+module simple_square #(
         parameter input_size = 1024,
         parameter output_size = 2 * input_size
 )
@@ -18,20 +18,20 @@ module shitty_square #(
         input   wire   ready_in,
 
         output  logic  busy_out,
-        output  logic  ready_out
+        output  logic  valid_out
 );
 
     logic [input_size-1:0] leftover;
     logic [$clog2(input_size)-1:0] shift;
 
-    typedef enum {AWAITING, MULTIPLYING, FINISHING} state_t;
+    typedef enum {AWAITING, MULTIPLYING} state_t;
 
     state_t current_state;
 
     always_ff @(posedge clk_in)
         if(rst_in) begin
         
-            ready_out <= 1'b0;
+            valid_out <= 1'b0;
             busy_out <= 1'b0;
             result <= 0;
             current_state <= AWAITING;
@@ -40,7 +40,7 @@ module shitty_square #(
 
             case (current_state) AWAITING: begin
 
-                ready_out <= 1'b0;
+                valid_out <= 1'b0;
                 result <= 0;
                 shift <= 0;
 
@@ -56,7 +56,7 @@ module shitty_square #(
 
                 if (leftover == 0) begin
                     busy_out <= 1'b0;
-                    ready_out <= 1'b1;
+                    valid_out <= 1'b1;
                     current_state <= AWAITING;
                 end else begin
 
@@ -72,7 +72,7 @@ module shitty_square #(
             end
 
             default: begin
-                ready_out <= 1'b0;
+                valid_out <= 1'b0;
                 busy_out <= 1'b0;
                 current_state <= AWAITING;
             end

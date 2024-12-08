@@ -37,6 +37,21 @@ module square #(
     // Return:  11
     logic [1:0] state;
 
+    logic square_enable;
+    logic square_valid;
+
+    simple_square #(
+        .input_size(WIDTH)
+    ) square_block (
+        .input_1(value_in),
+        .input_2(value_in),
+        .result(intermediate),
+        .clk_in(clk_in),
+        .rst_in(rst_in),
+        .ready_in(square_enable),
+        .valid_out(square_valid)
+    );
+
     // Modulus block
     modulus #(
         .WIDTH(WIDTH)
@@ -80,10 +95,13 @@ module square #(
                 // Squaring
                 2'b01: begin
                     // Square the value
-                    intermediate <= value_in * value_in;
+                    // intermediate <= value_in * value_in;
+                    square_enable <= 1'b1;
 
-                    // Begin modulus operation
-                    state <= 2'b10;
+                    if (square_valid) begin
+                        // Begin modulus operation
+                        state <= 2'b10;
+                    end
                 end
 
                 // Computing modulus
