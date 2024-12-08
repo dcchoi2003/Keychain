@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
-| Date         : Sat Dec  7 15:40:24 2024
+| Date         : Sun Dec  8 14:56:20 2024
 | Host         : joseph-legion5 running 64-bit Linux Mint 22
 | Command      : report_timing_summary -file obj/post_synth_timing_summary.rpt
 | Design       : top_level
@@ -138,7 +138,7 @@ Table of Contents
 
     WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
     -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
-     -5.854     -517.046                    128                11250        0.142        0.000                      0                11250        3.500        0.000                       0                  5474  
+     -7.521     -113.681                     25                 3043        0.139        0.000                      0                 3043        3.500        0.000                       0                  1515  
 
 
 Timing constraints are not met.
@@ -161,7 +161,7 @@ gclk   {0.000 4.000}      10.000          100.000
 
 Clock             WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
 -----             -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
-gclk               -5.854     -517.046                    128                11250        0.142        0.000                      0                11250        3.500        0.000                       0                  5474  
+gclk               -7.521     -113.681                     25                 3043        0.139        0.000                      0                 3043        3.500        0.000                       0                  1515  
 
 
 ------------------------------------------------------------------------------------------------
@@ -192,24 +192,24 @@ Path Group    From Clock    To Clock          WNS(ns)      TNS(ns)  TNS Failing 
 From Clock:  gclk
   To Clock:  gclk
 
-Setup :          128  Failing Endpoints,  Worst Slack       -5.854ns,  Total Violation     -517.046ns
-Hold  :            0  Failing Endpoints,  Worst Slack        0.142ns,  Total Violation        0.000ns
+Setup :           25  Failing Endpoints,  Worst Slack       -7.521ns,  Total Violation     -113.681ns
+Hold  :            0  Failing Endpoints,  Worst Slack        0.139ns,  Total Violation        0.000ns
 PW    :            0  Failing Endpoints,  Worst Slack        3.500ns,  Total Violation        0.000ns
 ---------------------------------------------------------------------------------------------------
 
 
 Max Delay Paths
 --------------------------------------------------------------------------------------
-Slack (VIOLATED) :        -5.854ns  (required time - arrival time)
-  Source:                 expmod/intermediate_reg[23][16]/C
+Slack (VIOLATED) :        -7.521ns  (required time - arrival time)
+  Source:                 expmod/karat_input_2_reg[9]/C
                             (rising edge-triggered cell FDRE clocked by gclk  {rise@0.000ns fall@4.000ns period=10.000ns})
-  Destination:            expmod/running_total0/B[9]
-                            (rising edge-triggered cell DSP48E1 clocked by gclk  {rise@0.000ns fall@4.000ns period=10.000ns})
+  Destination:            expmod/running_total_reg[30]/D
+                            (rising edge-triggered cell FDRE clocked by gclk  {rise@0.000ns fall@4.000ns period=10.000ns})
   Path Group:             gclk
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            10.000ns  (gclk rise@10.000ns - gclk rise@0.000ns)
-  Data Path Delay:        15.224ns  (logic 9.643ns (63.340%)  route 5.581ns (36.660%))
-  Logic Levels:           10  (CARRY4=2 DSP48E1=3 LUT3=1 LUT4=1 LUT6=2 MUXF7=1)
+  Data Path Delay:        17.370ns  (logic 8.038ns (46.275%)  route 9.332ns (53.725%))
+  Logic Levels:           25  (CARRY4=12 LUT2=4 LUT3=2 LUT4=1 LUT6=6)
   Clock Path Skew:        -0.145ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    2.660ns = ( 12.660 - 10.000 ) 
     Source Clock Delay      (SCD):    2.920ns
@@ -228,37 +228,74 @@ Slack (VIOLATED) :        -5.854ns  (required time - arrival time)
     N15                  IBUF (Prop_ibuf_I_O)         1.440     1.440 r  clk_100mhz_IBUF_inst/O
                          net (fo=1, unplaced)         0.800     2.240    clk_100mhz_IBUF
                          BUFG (Prop_bufg_I_O)         0.096     2.336 r  clk_100mhz_IBUF_BUFG_inst/O
-                         net (fo=5480, unplaced)      0.584     2.920    expmod/clk_100mhz_IBUF_BUFG
-                         FDRE                                         r  expmod/intermediate_reg[23][16]/C
+                         net (fo=1514, unplaced)      0.584     2.920    expmod/clk_100mhz_IBUF_BUFG
+                         FDRE                                         r  expmod/karat_input_2_reg[9]/C
   -------------------------------------------------------------------    -------------------
-                         FDRE (Prop_fdre_C_Q)         0.456     3.376 r  expmod/intermediate_reg[23][16]/Q
-                         net (fo=1, unplaced)         0.965     4.341    expmod/square_block/intermediate0_i_35_4[16]
-                         LUT6 (Prop_lut6_I0_O)        0.295     4.636 r  expmod/square_block/intermediate0_i_285/O
-                         net (fo=1, unplaced)         0.000     4.636    expmod/square_block/intermediate0_i_285_n_0
-                         MUXF7 (Prop_muxf7_I1_O)      0.245     4.881 r  expmod/square_block/intermediate0_i_95/O
-                         net (fo=1, unplaced)         0.905     5.786    expmod/square_block/intermediate0_i_95_n_0
-                         LUT6 (Prop_lut6_I1_O)        0.298     6.084 r  expmod/square_block/intermediate0_i_17/O
-                         net (fo=8, unplaced)         0.800     6.884    expmod/intermediate[16]
-                         DSP48E1 (Prop_dsp48e1_B[16]_PCOUT[47])
-                                                      3.851    10.735 r  expmod/running_total0__3/PCOUT[47]
-                         net (fo=1, unplaced)         0.055    10.790    expmod/running_total0__3_n_106
-                         DSP48E1 (Prop_dsp48e1_PCIN[47]_PCOUT[47])
-                                                      1.713    12.503 r  expmod/running_total0__4/PCOUT[47]
-                         net (fo=1, unplaced)         0.000    12.503    expmod/running_total0__4_n_106
-                         DSP48E1 (Prop_dsp48e1_PCIN[47]_P[36])
-                                                      1.518    14.021 r  expmod/running_total0__5/P[36]
-                         net (fo=3, unplaced)         0.800    14.820    expmod/running_total0__5_n_69
-                         LUT3 (Prop_lut3_I1_O)        0.124    14.944 r  expmod/running_total0_i_35/O
-                         net (fo=1, unplaced)         0.639    15.583    expmod/running_total0_i_35_n_0
-                         CARRY4 (Prop_carry4_DI[1]_CO[3])
-                                                      0.507    16.090 r  expmod/running_total0_i_18/CO[3]
-                         net (fo=1, unplaced)         0.000    16.090    expmod/running_total0_i_18_n_0
+                         FDRE (Prop_fdre_C_Q)         0.456     3.376 r  expmod/karat_input_2_reg[9]/Q
+                         net (fo=21, unplaced)        0.531     3.907    expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/q_low_1_low_2.q_recursive.karat_mult_recursion_q/Q[5]
+                         LUT2 (Prop_lut2_I0_O)        0.295     4.202 r  expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/q_low_1_low_2.q_recursive.karat_mult_recursion_q/result_carry_i_16/O
+                         net (fo=1, unplaced)         0.000     4.202    expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/q_low_1_low_2.q_recursive.karat_mult_recursion_q/result_carry_i_16_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.550     4.752 r  expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/q_low_1_low_2.q_recursive.karat_mult_recursion_q/result_carry_i_8/CO[3]
+                         net (fo=1, unplaced)         0.009     4.761    expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/p_high_1_high_2.p_recursive.karat_mult_recursion_p/running_total[31]_i_22[0]
+                         CARRY4 (Prop_carry4_CI_O[2])
+                                                      0.256     5.017 r  expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/p_high_1_high_2.p_recursive.karat_mult_recursion_p/result_carry_i_8__0/O[2]
+                         net (fo=18, unplaced)        0.962     5.979    expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/result_carry__0_i_2__5_2[2]
+                         LUT6 (Prop_lut6_I1_O)        0.301     6.280 r  expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/result_carry_i_9__5/O
+                         net (fo=17, unplaced)        0.721     7.001    expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/karat_input_2_reg[11]
+                         LUT6 (Prop_lut6_I0_O)        0.124     7.125 r  expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/result_carry_i_19__3/O
+                         net (fo=7, unplaced)         0.937     8.062    expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/karat_input_2_reg[11]_1
+                         LUT6 (Prop_lut6_I3_O)        0.124     8.186 r  expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/result_carry_i_17__1/O
+                         net (fo=2, unplaced)         1.122     9.308    expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts_n_8
+                         LUT6 (Prop_lut6_I0_O)        0.124     9.432 r  expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/result_carry__0_i_14__3/O
+                         net (fo=3, unplaced)         0.467     9.899    expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/result_carry__0_i_14__3_n_0
+                         LUT6 (Prop_lut6_I5_O)        0.124    10.023 r  expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/result_carry__0_i_5__7/O
+                         net (fo=1, unplaced)         0.000    10.023    expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/S[0]
+                         CARRY4 (Prop_carry4_S[0]_O[1])
+                                                      0.424    10.447 r  expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/result_carry__0/O[1]
+                         net (fo=2, unplaced)         0.323    10.770    expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/result_carry__0_n_6
+                         LUT6 (Prop_lut6_I0_O)        0.306    11.076 r  expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/result2__0_carry_i_11/O
+                         net (fo=1, unplaced)         0.000    11.076    expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/result2__0_carry_i_11_n_0
+                         CARRY4 (Prop_carry4_S[3]_O[3])
+                                                      0.248    11.324 r  expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/result2__0_carry_i_8__1/O[3]
+                         net (fo=3, unplaced)         0.636    11.960    expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/q_low_1_low_2.q_recursive.karat_mult_recursion_q/result2__0_carry__0_1[3]
+                         LUT3 (Prop_lut3_I2_O)        0.307    12.267 r  expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/q_low_1_low_2.q_recursive.karat_mult_recursion_q/result2__0_carry__0_i_1__1/O
+                         net (fo=1, unplaced)         0.473    12.740    expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/q_low_1_low_2.q_recursive.karat_mult_recursion_q_n_49
+                         CARRY4 (Prop_carry4_DI[3]_CO[3])
+                                                      0.385    13.125 r  expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/result2__0_carry__0/CO[3]
+                         net (fo=1, unplaced)         0.000    13.125    expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/result2__0_carry__0_n_0
+                         CARRY4 (Prop_carry4_CI_O[0])
+                                                      0.235    13.360 r  expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/result2__0_carry__1/O[0]
+                         net (fo=1, unplaced)         0.311    13.671    expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/p_high_1_high_2.p_recursive.karat_mult_recursion_p/result_carry__1_0[0]
+                         LUT2 (Prop_lut2_I1_O)        0.295    13.966 r  expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/p_high_1_high_2.p_recursive.karat_mult_recursion_p/result_carry__1_i_3__1/O
+                         net (fo=1, unplaced)         0.000    13.966    expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/p_high_1_high_2.p_recursive.karat_mult_recursion_p_n_22
+                         CARRY4 (Prop_carry4_S[1]_O[3])
+                                                      0.640    14.606 r  expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/result_carry__1/O[3]
+                         net (fo=2, unplaced)         0.629    15.235    expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/result_carry__1_n_4
+                         LUT2 (Prop_lut2_I0_O)        0.307    15.542 r  expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/running_total[18]_i_30/O
+                         net (fo=1, unplaced)         0.000    15.542    expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/running_total[18]_i_30_n_0
+                         CARRY4 (Prop_carry4_S[3]_O[3])
+                                                      0.248    15.790 r  expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/running_total_reg[18]_i_26/O[3]
+                         net (fo=3, unplaced)         0.636    16.426    expmod/karatsuba/q_low_1_low_2.q_recursive.karat_mult_recursion_q/running_total_reg[26]_i_7[3]
+                         LUT3 (Prop_lut3_I2_O)        0.307    16.733 r  expmod/karatsuba/q_low_1_low_2.q_recursive.karat_mult_recursion_q/running_total[26]_i_8/O
+                         net (fo=1, unplaced)         0.473    17.206    expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/q_low_1_low_2.q_recursive.karat_mult_recursion_q/running_total[22]_i_5[3]
+                         CARRY4 (Prop_carry4_DI[3]_CO[3])
+                                                      0.385    17.591 r  expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/q_low_1_low_2.q_recursive.karat_mult_recursion_q/running_total_reg[26]_i_7/CO[3]
+                         net (fo=1, unplaced)         0.000    17.591    expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/p_high_1_high_2.p_recursive.karat_mult_recursion_p/running_total[26]_i_5[0]
+                         CARRY4 (Prop_carry4_CI_CO[2])
+                                                      0.250    17.841 r  expmod/karatsuba/ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts/p_high_1_high_2.p_recursive.karat_mult_recursion_p/running_total_reg[31]_i_5/CO[2]
+                         net (fo=6, unplaced)         0.484    18.325    expmod/karatsuba/p_high_1_high_2.p_recursive.karat_mult_recursion_p/CO[0]
+                         LUT2 (Prop_lut2_I1_O)        0.310    18.635 r  expmod/karatsuba/p_high_1_high_2.p_recursive.karat_mult_recursion_p/running_total[26]_i_3/O
+                         net (fo=1, unplaced)         0.000    18.635    expmod/karatsuba/p_high_1_high_2.p_recursive.karat_mult_recursion_p/q_low_1_low_2.q_recursive.karat_mult_recursion_q/running_total_reg[26][3]
+                         CARRY4 (Prop_carry4_S[3]_CO[3])
+                                                      0.401    19.036 r  expmod/karatsuba/p_high_1_high_2.p_recursive.karat_mult_recursion_p/q_low_1_low_2.q_recursive.karat_mult_recursion_q/running_total_reg[26]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000    19.036    expmod/karatsuba/p_high_1_high_2.p_recursive.karat_mult_recursion_p/q_low_1_low_2.q_recursive.karat_mult_recursion_q/running_total_reg[26]_i_2_n_0
                          CARRY4 (Prop_carry4_CI_O[3])
-                                                      0.329    16.419 r  expmod/running_total0_i_17/O[3]
-                         net (fo=1, unplaced)         0.618    17.037    expmod/modulus_block/running_total_reg[60][3]
-                         LUT4 (Prop_lut4_I2_O)        0.307    17.344 r  expmod/modulus_block/running_total0_i_5/O
-                         net (fo=2, unplaced)         0.800    18.144    expmod/modulus_block_n_5
-                         DSP48E1                                      r  expmod/running_total0/B[9]
+                                                      0.329    19.365 r  expmod/karatsuba/p_high_1_high_2.p_recursive.karat_mult_recursion_p/q_low_1_low_2.q_recursive.karat_mult_recursion_q/running_total_reg[30]_i_2/O[3]
+                         net (fo=1, unplaced)         0.618    19.983    expmod/modulus_block/karat_output[29]
+                         LUT4 (Prop_lut4_I0_O)        0.307    20.290 r  expmod/modulus_block/running_total[30]_i_1/O
+                         net (fo=1, unplaced)         0.000    20.290    expmod/running_total0_in[30]
+                         FDRE                                         r  expmod/running_total_reg[30]/D
   -------------------------------------------------------------------    -------------------
 
                          (clock gclk rise edge)      10.000    10.000 r  
@@ -267,17 +304,16 @@ Slack (VIOLATED) :        -5.854ns  (required time - arrival time)
     N15                  IBUF (Prop_ibuf_I_O)         1.370    11.370 r  clk_100mhz_IBUF_inst/O
                          net (fo=1, unplaced)         0.760    12.130    clk_100mhz_IBUF
                          BUFG (Prop_bufg_I_O)         0.091    12.221 r  clk_100mhz_IBUF_BUFG_inst/O
-                         net (fo=5480, unplaced)      0.439    12.660    expmod/clk_100mhz_IBUF_BUFG
-                         DSP48E1                                      r  expmod/running_total0/CLK
+                         net (fo=1514, unplaced)      0.439    12.660    expmod/clk_100mhz_IBUF_BUFG
+                         FDRE                                         r  expmod/running_total_reg[30]/C
                          clock pessimism              0.115    12.775    
                          clock uncertainty           -0.035    12.740    
-                         DSP48E1 (Setup_dsp48e1_CLK_B[9])
-                                                     -0.450    12.290    expmod/running_total0
+                         FDRE (Setup_fdre_C_D)        0.029    12.769    expmod/running_total_reg[30]
   -------------------------------------------------------------------
-                         required time                         12.290    
-                         arrival time                         -18.144    
+                         required time                         12.769    
+                         arrival time                         -20.290    
   -------------------------------------------------------------------
-                         slack                                 -5.854    
+                         slack                                 -7.521    
 
 
 
@@ -285,15 +321,15 @@ Slack (VIOLATED) :        -5.854ns  (required time - arrival time)
 
 Min Delay Paths
 --------------------------------------------------------------------------------------
-Slack (MET) :             0.142ns  (arrival time - required time)
-  Source:                 expmod/square_ready_reg/C
+Slack (MET) :             0.139ns  (arrival time - required time)
+  Source:                 expmod/modulus_block/value_out_reg[0]/C
                             (rising edge-triggered cell FDRE clocked by gclk  {rise@0.000ns fall@4.000ns period=10.000ns})
-  Destination:            expmod/square_ready_reg/D
-                            (rising edge-triggered cell FDRE clocked by gclk  {rise@0.000ns fall@4.000ns period=10.000ns})
+  Destination:            expmod/running_total_reg[0]/D
+                            (rising edge-triggered cell FDSE clocked by gclk  {rise@0.000ns fall@4.000ns period=10.000ns})
   Path Group:             gclk
   Path Type:              Hold (Min at Fast Process Corner)
   Requirement:            0.000ns  (gclk rise@0.000ns - gclk rise@0.000ns)
-  Data Path Delay:        0.378ns  (logic 0.239ns (63.281%)  route 0.139ns (36.719%))
+  Data Path Delay:        0.375ns  (logic 0.239ns (63.779%)  route 0.136ns (36.221%))
   Logic Levels:           1  (LUT6=1)
   Clock Path Skew:        0.145ns (DCD - SCD - CPR)
     Destination Clock Delay (DCD):    1.039ns
@@ -308,14 +344,14 @@ Slack (MET) :             0.142ns  (arrival time - required time)
     N15                  IBUF (Prop_ibuf_I_O)         0.209     0.209 r  clk_100mhz_IBUF_inst/O
                          net (fo=1, unplaced)         0.337     0.546    clk_100mhz_IBUF
                          BUFG (Prop_bufg_I_O)         0.026     0.572 r  clk_100mhz_IBUF_BUFG_inst/O
-                         net (fo=5480, unplaced)      0.114     0.686    expmod/clk_100mhz_IBUF_BUFG
-                         FDRE                                         r  expmod/square_ready_reg/C
+                         net (fo=1514, unplaced)      0.114     0.686    expmod/modulus_block/clk_100mhz_IBUF_BUFG
+                         FDRE                                         r  expmod/modulus_block/value_out_reg[0]/C
   -------------------------------------------------------------------    -------------------
-                         FDRE (Prop_fdre_C_Q)         0.141     0.827 f  expmod/square_ready_reg/Q
-                         net (fo=3, unplaced)         0.139     0.965    expmod/square_block/busy_out_reg_1
-                         LUT6 (Prop_lut6_I5_O)        0.098     1.063 r  expmod/square_block/square_ready_i_1/O
-                         net (fo=1, unplaced)         0.000     1.063    expmod/square_block_n_97
-                         FDRE                                         r  expmod/square_ready_reg/D
+                         FDRE (Prop_fdre_C_Q)         0.141     0.827 r  expmod/modulus_block/value_out_reg[0]/Q
+                         net (fo=2, unplaced)         0.136     0.962    expmod/modulus_block/modulus_result[0]
+                         LUT6 (Prop_lut6_I5_O)        0.098     1.060 r  expmod/modulus_block/running_total[0]_i_1/O
+                         net (fo=1, unplaced)         0.000     1.060    expmod/running_total0_in[0]
+                         FDSE                                         r  expmod/running_total_reg[0]/D
   -------------------------------------------------------------------    -------------------
 
                          (clock gclk rise edge)       0.000     0.000 r  
@@ -324,15 +360,15 @@ Slack (MET) :             0.142ns  (arrival time - required time)
     N15                  IBUF (Prop_ibuf_I_O)         0.396     0.396 r  clk_100mhz_IBUF_inst/O
                          net (fo=1, unplaced)         0.355     0.751    clk_100mhz_IBUF
                          BUFG (Prop_bufg_I_O)         0.029     0.780 r  clk_100mhz_IBUF_BUFG_inst/O
-                         net (fo=5480, unplaced)      0.259     1.039    expmod/clk_100mhz_IBUF_BUFG
-                         FDRE                                         r  expmod/square_ready_reg/C
+                         net (fo=1514, unplaced)      0.259     1.039    expmod/clk_100mhz_IBUF_BUFG
+                         FDSE                                         r  expmod/running_total_reg[0]/C
                          clock pessimism             -0.208     0.831    
-                         FDRE (Hold_fdre_C_D)         0.091     0.922    expmod/square_ready_reg
+                         FDSE (Hold_fdse_C_D)         0.091     0.922    expmod/running_total_reg[0]
   -------------------------------------------------------------------
                          required time                         -0.922    
-                         arrival time                           1.063    
+                         arrival time                           1.060    
   -------------------------------------------------------------------
-                         slack                                  0.142    
+                         slack                                  0.139    
 
 
 

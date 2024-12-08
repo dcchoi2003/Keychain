@@ -95,7 +95,7 @@ module exponent_modulus #(
     );
 
     // Karatsuba multiplier
-    karat_mult_recursion #(
+    karat_mult_combo #(
         .input_size(WIDTH),
         .num_stages(STAGES)
     ) karatsuba (

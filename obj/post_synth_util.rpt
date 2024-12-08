@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
-| Date         : Sat Dec  7 15:40:24 2024
+| Date         : Sun Dec  8 14:56:20 2024
 | Host         : joseph-legion5 running 64-bit Linux Mint 22
 | Command      : report_utilization -file obj/post_synth_util.rpt -hierarchical -hierarchical_depth 4
 | Design       : top_level
@@ -19,17 +19,34 @@ Table of Contents
 1. Utilization by Hierarchy
 ---------------------------
 
-+----------------------+------------------+------------+------------+---------+------+------+--------+--------+------------+
-|       Instance       |      Module      | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | DSP Blocks |
-+----------------------+------------------+------------+------------+---------+------+------+--------+--------+------------+
-| top_level            |            (top) |       2367 |       2367 |       0 |    0 | 5471 |      0 |      0 |         11 |
-|   (top_level)        |            (top) |          0 |          0 |       0 |    0 |   18 |      0 |      0 |          0 |
-|   expmod             | exponent_modulus |       2367 |       2367 |       0 |    0 | 5453 |      0 |      0 |         11 |
-|     (expmod)         | exponent_modulus |         89 |         89 |       0 |    0 | 1099 |      0 |      0 |          7 |
-|     modulus_block    |          modulus |        982 |        982 |       0 |    0 | 2140 |      0 |      0 |          0 |
-|     square_block     |           square |       1296 |       1296 |       0 |    0 | 2214 |      0 |      0 |          4 |
-|       (square_block) |           square |        387 |        387 |       0 |    0 |   73 |      0 |      0 |          4 |
-|       modulus_block  |        modulus_0 |        909 |        909 |       0 |    0 | 2141 |      0 |      0 |          0 |
-+----------------------+------------------+------------+------------+---------+------+------+--------+--------+------------+
++-----------------------------------------------------------------+-------------------------------------+------------+------------+---------+------+------+--------+--------+------------+
+|                             Instance                            |                Module               | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | DSP Blocks |
++-----------------------------------------------------------------+-------------------------------------+------------+------------+---------+------+------+--------+--------+------------+
+| top_level                                                       |                               (top) |       1392 |       1392 |       0 |    0 | 1513 |      0 |      0 |          1 |
+|   (top_level)                                                   |                               (top) |          0 |          0 |       0 |    0 |   18 |      0 |      0 |          0 |
+|   expmod                                                        |                    exponent_modulus |       1392 |       1392 |       0 |    0 | 1495 |      0 |      0 |          1 |
+|     (expmod)                                                    |                    exponent_modulus |         40 |         40 |       0 |    0 |  348 |      0 |      0 |          0 |
+|     karatsuba                                                   |                    karat_mult_combo |        553 |        553 |       0 |    0 |    4 |      0 |      0 |          0 |
+|       (karatsuba)                                               |                    karat_mult_combo |          2 |          2 |       0 |    0 |    1 |      0 |      0 |          0 |
+|       p_high_1_high_2.p_recursive.karat_mult_recursion_p        |    karat_mult_combo__parameterized0 |        169 |        169 |       0 |    0 |    1 |      0 |      0 |          0 |
+|         (p_high_1_high_2.p_recursive.karat_mult_recursion_p)    |    karat_mult_combo__parameterized0 |         66 |         66 |       0 |    0 |    0 |      0 |      0 |          0 |
+|         p_high_1_high_2.p_recursive.karat_mult_recursion_p      |  karat_mult_combo__parameterized1_8 |         32 |         32 |       0 |    0 |    1 |      0 |      0 |          0 |
+|         q_low_1_low_2.q_recursive.karat_mult_recursion_q        |  karat_mult_combo__parameterized1_9 |         31 |         31 |       0 |    0 |    0 |      0 |      0 |          0 |
+|         ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts   | karat_mult_combo__parameterized1_10 |         40 |         40 |       0 |    0 |    0 |      0 |      0 |          0 |
+|       q_low_1_low_2.q_recursive.karat_mult_recursion_q          |  karat_mult_combo__parameterized0_1 |        177 |        177 |       0 |    0 |    2 |      0 |      0 |          0 |
+|         (q_low_1_low_2.q_recursive.karat_mult_recursion_q)      |  karat_mult_combo__parameterized0_1 |         73 |         73 |       0 |    0 |    1 |      0 |      0 |          0 |
+|         p_high_1_high_2.p_recursive.karat_mult_recursion_p      |  karat_mult_combo__parameterized1_5 |         27 |         27 |       0 |    0 |    0 |      0 |      0 |          0 |
+|         q_low_1_low_2.q_recursive.karat_mult_recursion_q        |  karat_mult_combo__parameterized1_6 |         37 |         37 |       0 |    0 |    1 |      0 |      0 |          0 |
+|         ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts   |  karat_mult_combo__parameterized1_7 |         40 |         40 |       0 |    0 |    0 |      0 |      0 |          0 |
+|       ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts     |  karat_mult_combo__parameterized0_2 |        205 |        205 |       0 |    0 |    0 |      0 |      0 |          0 |
+|         (ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts) |  karat_mult_combo__parameterized0_2 |         70 |         70 |       0 |    0 |    0 |      0 |      0 |          0 |
+|         p_high_1_high_2.p_recursive.karat_mult_recursion_p      |    karat_mult_combo__parameterized1 |         42 |         42 |       0 |    0 |    0 |      0 |      0 |          0 |
+|         q_low_1_low_2.q_recursive.karat_mult_recursion_q        |  karat_mult_combo__parameterized1_3 |         45 |         45 |       0 |    0 |    0 |      0 |      0 |          0 |
+|         ts_eq_rlo_x_slo.ts_karat_mult.karat_mult_recursion_ts   |  karat_mult_combo__parameterized1_4 |         48 |         48 |       0 |    0 |    0 |      0 |      0 |          0 |
+|     modulus_block                                               |                             modulus |        376 |        376 |       0 |    0 |  560 |      0 |      0 |          0 |
+|     square_block                                                |                              square |        423 |        423 |       0 |    0 |  583 |      0 |      0 |          1 |
+|       (square_block)                                            |                              square |         92 |         92 |       0 |    0 |   23 |      0 |      0 |          1 |
+|       modulus_block                                             |                           modulus_0 |        331 |        331 |       0 |    0 |  560 |      0 |      0 |          0 |
++-----------------------------------------------------------------+-------------------------------------+------------+------------+---------+------+------+--------+--------+------------+
 
 

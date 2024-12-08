@@ -4,7 +4,7 @@
 module karat_mult_recursion #(
         parameter input_size = 1024,
         parameter output_size = 2 * input_size,
-        parameter num_stages = 2;
+        parameter num_stages = 2
         // parameter num_stages = $clog2(input_size);
 )
 (

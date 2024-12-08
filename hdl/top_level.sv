@@ -18,7 +18,7 @@ module top_level
     // output logic [6:0]  ss1_c, //cathod controls for the segments of lower four digits
     );
 
-    localparam WIDTH = 32;
+    localparam WIDTH = 16;
 
     // shut up those RGBs
     assign rgb0 = 0;
@@ -58,8 +58,8 @@ module top_level
             expmod_ready <= 0;
         end else begin
             if (!expmod_busy && !expmod_valid) begin
-                exponent <= 32'd72;
-                modulus <= 32'd1073;
+                exponent <= 16'd72;
+                modulus <= 16'd1073;
                 expmod_ready <= 1;
             end else if (expmod_valid) begin
                 led <= result;
