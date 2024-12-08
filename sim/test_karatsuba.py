@@ -35,10 +35,13 @@ async def test_karatsuba(dut):
     # Evaluate
     dut.input_1.value = x
     dut.input_2.value = y
-    dut.ready_in.value = 1
-    await ClockCycles(dut.clk_in,1)
-    dut.ready_in.value = 0
-    await ClockCycles(dut.clk_in,50)
+    dut.enable.value = 1
+    await RisingEdge(dut.clk_in)
+    dut.enable.value = 0
+    await ClockCycles(dut.clk_in, 1_000)
+
+    assert dut.result.value == x*y
+
     print(x * y)
 
     
