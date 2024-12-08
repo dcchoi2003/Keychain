@@ -60,10 +60,10 @@ module exponent_modulus #(
 
     // State of FSM
     // 
-    // Idle:   00
+    // Idle:   00 (also return)
     // Square: 01
-    // Add:    10
-    // Return: 11
+    // Mult:   10
+    // Mod:    11
     logic [1:0] state;
 
     // Squaring block
@@ -94,18 +94,18 @@ module exponent_modulus #(
         .valid_out(modulus_valid)
     );
 
-    // Karatsuba multiplier
-    karat_mult_combo #(
-        .input_size(WIDTH),
-        .num_stages(STAGES)
-    ) karatsuba (
+    // Hardware multiplier
+    simple_square #(
+        .input_size(WIDTH)
+    ) multiplier (
         .clk_in(clk_in),
         .rst_in(rst_in),
+        .ready_in(karat_ready),
+        .busy_out(karat_busy),
+        .valid_out(karat_valid),
         .input_1(karat_input_1),
         .input_2(karat_input_2),
-        .result(karat_output),
-        .enable(karat_ready),
-        .o_finish(karat_valid)
+        .result(karat_output)
     );
 
     always_ff @(posedge clk_in) begin
@@ -122,14 +122,32 @@ module exponent_modulus #(
             value_out <= 0;
             modulus_ready <= 1'b0;
             karat_ready <= 1'b0;
-            karat_busy <= 1'b0;
             karat_input_1 <= 0;
             karat_input_2 <= 0;
         end else begin
             case (state)
                 // Idle
                 2'b00: begin
-                    if (ready_in) begin
+                    // See if we're returning
+                    if (busy_out) begin
+                        // We're no longer busy
+                        busy_out <= 1'b0;
+
+                        // Load result
+                        value_out <= exponent_in == 0 ? 1 : modulus_result;
+
+                        // Reset running total
+                        running_total <= 1;
+
+                        // Reset intermediate
+                        intermediate <= 0;
+
+                        // Reset index
+                        index <= 0;
+
+                        // Switch to idle state
+                        state <= 2'b00;
+                    end else if (ready_in) begin
                         // We're busy
                         busy_out <= 1'b1;
 
@@ -170,77 +188,59 @@ module exponent_modulus #(
                     end
                 end
 
-                // Add
+                // Multiply
                 2'b10: begin
                     // Compute contribution from this index
                     if (exponent_in[index]) begin
-                        if (!modulus_busy && !modulus_valid) begin
-                            if (!karat_busy && !karat_valid) begin
-                                // Load inputs to Karatsuba block
-                                karat_input_1 <= running_total;
-                                karat_input_2 <= intermediate[index];
+                        if (!karat_busy && !karat_valid) begin
+                            // Load inputs to Karatsuba block
+                            karat_input_1 <= running_total;
+                            karat_input_2 <= intermediate[index];
 
-                                // Trigger Karatsuba block
-                                karat_ready <= 1'b1;
+                            // Trigger Karatsuba block
+                            karat_ready <= 1'b1;
+                        end else if (karat_valid) begin
+                            // Output running total
+                            running_total <= karat_output;
 
-                                // Turn on busy signal
-                                karat_busy  <= 1'b1;
-                            end else if (karat_valid) begin
-                                // Output running total
-                                running_total <= karat_output;
+                            // Calculate modulus to prevent overflow
 
-                                // Turn off busy signal
-                                karat_busy <= 1'b0;
-
-                                // Calculate modulus to prevent overflow
-
-                                // Trigger the modulus block
-                                modulus_ready <= 1'b1;
-                            end
-                        end else if (modulus_valid) begin
-                            // Update the running product
-                            running_total <= modulus_result;
-
-                            // Check if we're done
-                            if (index == DEPTH - 1) begin
-                                // Switch to returning state
-                                state <= 2'b11;
-                            end else begin
-                                // Go to the next index
-                                index <= index + 1;
-                            end
-                        end
+                            // Switch to modulus state
+                            state <= 2'b11;
+                        end                        
                     end else begin
                         // Check if we're done
                         if (index == DEPTH - 1) begin
-                            // Switch to returning state
-                            state <= 2'b11;
+                            // Switch to idle/returning state
+                            state <= 2'b00;
                         end else begin
                             // Go to the next index
                             index <= index + 1;
                         end
-                    end
+                    end                    
                 end
 
-                // Return
+                // Modulus
                 2'b11: begin
-                    // We're no longer busy
-                    busy_out <= 1'b0;
+                    if (!modulus_busy && !modulus_valid) begin
+                        // Trigger the modulus block
+                        modulus_ready <= 1'b1;
+                    end else if (modulus_valid) begin
+                        // Update the running product
+                        running_total <= modulus_result;
 
-                    // Load result
-                    value_out <= exponent_in == 0 ? 1 : modulus_result;
+                        // Check if we're done
+                        if (index == DEPTH - 1) begin
+                            // Switch to idle/returning state
+                            state <= 2'b00;
+                        end else begin
+                            // Go to the next index
+                            index <= index + 1;
 
-                    // Reset running total
-                    running_total <= 1;
-
-                    // Reset intermediate
-                    intermediate <= 0;
-
-                    // Reset index
-                    index <= 0;
-
-                    // Switch to idle state
-                    state <= 2'b00;
+                            // Switch to the multiplier state
+                            state <= 2'b10;
+                        end
+                    end
                 end
 
                 // default unnecessary as we've covered every possibility

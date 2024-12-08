@@ -29,6 +29,9 @@ module square #(
     // Modulus block result
     logic [WIDTH-1:0] modulus_result;
 
+    // Modulus block input
+    logic [2*WIDTH-1:0] modulus_input;
+
     // State of FSM
     // 
     // Idle:    00
@@ -59,7 +62,7 @@ module square #(
         .clk_in(clk_in),
         .rst_in(rst_in),
         .ready_in(modulus_ready),
-        .value_in(intermediate),
+        .value_in(modulus_input),
         .modulus_in(modulus_in),
         .value_out(modulus_result),
         .busy_out(modulus_busy),
@@ -72,8 +75,9 @@ module square #(
             last_busy <= 1'b0;
             square_out <= 0;
             busy_out <= 1'b0;
-            intermediate <= 0;
             state <= 2'b00;
+            square_enable <= 1'b0;
+            modulus_input <= 0;
             
             // Reset control signal
             modulus_ready <= 1'b0;
@@ -101,6 +105,9 @@ module square #(
                     if (square_valid) begin
                         // Begin modulus operation
                         state <= 2'b10;
+
+                        // Save modulus input
+                        modulus_input <= intermediate;
                     end
                 end
 
@@ -139,6 +146,11 @@ module square #(
 
         // Update the LASTBUSY register
         last_busy <= busy_out;
+
+        // Disable square enable signal after one cycle
+        if (square_enable) begin
+            square_enable <= 1'b0;
+        end
     end
 
 endmodule

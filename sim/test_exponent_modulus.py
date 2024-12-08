@@ -27,22 +27,18 @@ async def test_expmod(dut, base, exponent, modulus):
     dut.ready_in.value = 1
     await RisingEdge(dut.clk_in)
     dut.ready_in.value = 0
-    await ClockCycles(dut.clk_in, 10000)
-
-    # await RisingEdge(dut.valid_out)
+    await RisingEdge(dut.valid_out)
 
     # Wait another clock cycle
     await ClockCycles(dut.clk_in, 1)
 
-    # print(f"Result: {dut.value_out}")
+    assert dut.value_out == pow(base, exponent, modulus)
 
-    # assert dut.value_out == pow(base, exponent, modulus)
+    cycles = int((gst("ns") - start_time) / 10)
 
-    # cycles = int((gst("ns") - start_time) / 10)
+    print(f"OK in {cycles} cycles")
 
-    # print(f"OK in {cycles} cycles")
-
-    # return cycles
+    return cycles
 
 @cocotb.test()
 async def test_exponent_modulus(dut):
@@ -91,7 +87,8 @@ def is_runner():
     sources = [proj_path / "hdl" / "exponent_modulus.sv"]
     sources += [proj_path / "hdl" / "modulus.sv"]
     sources += [proj_path / "hdl" / "square.sv"]
-    sources += [proj_path / "hdl" / "karat_mult_recursion.sv"]
+    # sources += [proj_path / "hdl" / "karat_mult_recursion.sv"]
+    sources += [proj_path / "hdl" / "simple_square.sv"]
     build_test_args = ["-Wall"]
     parameters = {}
     sys.path.append(str(proj_path / "sim"))
