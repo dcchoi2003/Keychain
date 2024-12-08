@@ -18,6 +18,9 @@ module exponent_modulus #(
     // Width of the exponent
     localparam DEPTH = WIDTH;
 
+    // Depth of the Karatsuba multiplier
+    localparam STAGES = $clog2(WIDTH);
+
     // Width of the active index
     localparam INDEX_WIDTH = $clog2(DEPTH);
 
@@ -35,6 +38,13 @@ module exponent_modulus #(
 
     // Squaring block input and output registers
     logic [WIDTH-1:0] square_input, square_output;
+
+    // Karatsuba block input and output registers
+    logic [WIDTH-1:0] karat_input_1, karat_input_2;
+    logic [2*WIDTH-1:0] karat_output;
+
+    // Karatsuba block control signals
+    logic karat_ready, karat_busy, karat_valid;
 
     // Modulus block control signals
     logic modulus_ready, modulus_busy, modulus_valid;
@@ -84,6 +94,20 @@ module exponent_modulus #(
         .valid_out(modulus_valid)
     );
 
+    // Karatsuba multiplier
+    karat_mult_recursion #(
+        .input_size(WIDTH),
+        .num_stages(STAGES)
+    ) karatsuba (
+        .clk_in(clk_in),
+        .rst_in(rst_in),
+        .input_1(karat_input_1),
+        .input_2(karat_input_2),
+        .result(karat_output),
+        .enable(karat_ready),
+        .o_finish(karat_valid)
+    );
+
     always_ff @(posedge clk_in) begin
         if (rst_in) begin
             // Reset the block
@@ -97,6 +121,10 @@ module exponent_modulus #(
             index <= 0;
             value_out <= 0;
             modulus_ready <= 1'b0;
+            karat_ready <= 1'b0;
+            karat_busy <= 1'b0;
+            karat_input_1 <= 0;
+            karat_input_2 <= 0;
         end else begin
             case (state)
                 // Idle
@@ -147,15 +175,30 @@ module exponent_modulus #(
                     // Compute contribution from this index
                     if (exponent_in[index]) begin
                         if (!modulus_busy && !modulus_valid) begin
-                            // Update the running product
-                            running_total <= running_total * intermediate[index];
+                            if (!karat_busy && !karat_valid) begin
+                                // Load inputs to Karatsuba block
+                                karat_input_1 <= running_total;
+                                karat_input_2 <= intermediate[index];
 
-                            // Calculate modulus to prevent overflow
+                                // Trigger Karatsuba block
+                                karat_ready <= 1'b1;
 
-                            // Trigger the modulus block
-                            modulus_ready <= 1'b1;
+                                // Turn on busy signal
+                                karat_busy  <= 1'b1;
+                            end else if (karat_valid) begin
+                                // Output running total
+                                running_total <= karat_output;
+
+                                // Turn off busy signal
+                                karat_busy <= 1'b0;
+
+                                // Calculate modulus to prevent overflow
+
+                                // Trigger the modulus block
+                                modulus_ready <= 1'b1;
+                            end
                         end else if (modulus_valid) begin
-                            // Update the running total
+                            // Update the running product
                             running_total <= modulus_result;
 
                             // Check if we're done
@@ -215,6 +258,11 @@ module exponent_modulus #(
         // Modulus block trigger is one-cycle high only
         if (modulus_ready) begin
             modulus_ready <= 1'b0;
+        end
+
+        // Karatsuba block trigger is one-cycle high only
+        if (karat_ready) begin
+            karat_ready <= 1'b0;
         end
     end
 
