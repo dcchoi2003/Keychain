@@ -10,3 +10,6 @@
 
 # Verification output
 /a.out
+
+# Xilinx configuration data
+/.Xil
