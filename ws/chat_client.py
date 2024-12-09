@@ -10,6 +10,8 @@ BAUD = 115200
 
 from websockets.client import connect
 
+
+
 URI = input("URI >> ")
 print()
 
@@ -19,14 +21,11 @@ def comm_fpga(action, message):
 
     ser = serial.Serial(SERIAL_PORTNAME,BAUD)
 
-    # alert FPGA that computer is sending data
-    ser.write(0xFF)
-
     # classify as encode or decode
     if action == "encode":
-        ser.write(0xFF)
+        ser.write(0xF)
     else:
-        ser.write(0x00)
+        ser.write(0x0)
 
     # send data to FPGA
     for character in message:

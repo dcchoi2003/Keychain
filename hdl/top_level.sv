@@ -54,53 +54,38 @@ module top_level
                 .new_data_out(receiver_data_out),
                 .data_byte_out(byte_out_data));
 
-   // BRAM Memory
-   // We've configured this for you, but you'll need to hook up your address and data ports to the rest of your logic!
+    // BRAM Memory
+    // We've configured this for you, but you'll need to hook up your address and data ports to the rest of your logic!
 
-   // 256-bit (or size of WIDTH) keys, no need for depth
-   parameter BRAM_WIDTH = WIDTH;
-   parameter BRAM_DEPTH = 1;
-   parameter ADDR_WIDTH = 1; // $clog2(BRAM_DEPTH)
+    // 256-bit (or size of WIDTH) keys, no need for depth
+    parameter BRAM_WIDTH = WIDTH;
+    parameter BRAM_DEPTH = 1;
+    parameter ADDR_WIDTH = 1; // $clog2(BRAM_DEPTH)
 
-   // only using port a for reads: we only use dout
-   logic [BRAM_WIDTH-1:0]     douta;
-   logic [ADDR_WIDTH-1:0]     addra;
-
-   // only using port b for writes: we only use din
-   logic [BRAM_WIDTH-1:0]     dinb;
-   logic [ADDR_WIDTH-1:0]     addrb;
+    // only using port a for reads: we only use dout
+    logic [BRAM_WIDTH-1:0]     douta;
+    logic [ADDR_WIDTH-1:0]     addra;
 
     // bram access for secret key
-    xilinx_true_dual_port_read_first_2_clock_ram
-     #(.RAM_WIDTH(BRAM_WIDTH),
-       .RAM_DEPTH(BRAM_DEPTH),
-       .INIT_FILE(`FPATH(secret_key.mem))
-     ) secret_key_bram
-       (
-        // PORT A
-        .addra(addra),
-        .dina(0), // we only use port A for reads!
-        .clka(clk_100mhz),
-        .wea(1'b0), // read only
-        .ena(1'b1),
-        .rsta(sys_rst),
-        .regcea(1'b1),
-        .douta(douta),
-        // PORT B
-        .addrb(addrb),
-        .dinb(dinb),
-        .clkb(clk_100mhz),
-        .web(1'b1), // write always
-        .enb(1'b1),
-        .rstb(sys_rst),
-        .regceb(1'b1),
-        .doutb() // we only use port B for writes!
-        );
+
+        xilinx_single_port_ram_read_first #(
+        .RAM_WIDTH(BRAM_WIDTH),                       // Specify RAM data width
+        .RAM_DEPTH(BRAM_DEPTH),                     // Specify RAM depth (number of entries)
+        .INIT_FILE(`FPATH(secret_key.mem))          // Specify name/location of RAM initialization file if using one (leave blank if not)
+        ) secret_key_bram (
+        .addra(addra),     // Address bus, width determined from RAM_DEPTH
+        .dina(0),       // RAM input data, width determined from RAM_WIDTH
+        .clka(clk_100mhz),       // Clock
+        .wea(1'b0),         // Write enable
+        .ena(1'b1),         // RAM Enable, for additional power savings, disable port when not in use
+        .rsta(sys_rst),       // Output reset (does not affect memory contents)
+        .regcea(1'b1),   // Output register enable
+        .douta(douta)      // RAM output data, width determined from RAM_WIDTH
+    );
 
         logic [7:0]                uart_data_in;
         logic                      uart_data_valid;
         logic                      uart_busy;
-
 
    // UART Transmitter to FTDI2232
    // TODO: instantiate the UART transmitter you just wrote, using the input signals from above.
