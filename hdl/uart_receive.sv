@@ -30,10 +30,6 @@ module uart_receive
         
         if (rst_in) begin
             current_state <= IDLE;
-            // receive_data <= 0;
-            // num_cycles <= 0;
-            // period_count <= 0;
-            // new_data_out <= 0;
         end
 
         if (current_state == IDLE) begin
