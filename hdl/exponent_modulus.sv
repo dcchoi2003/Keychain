@@ -56,7 +56,10 @@ module exponent_modulus #(
     logic [INDEX_WIDTH-1:0] index;
 
     // Running total of output
-    logic [2*WIDTH-1:0] running_total;
+    logic [WIDTH-1:0] running_total;
+    
+    // Multiplier product
+    logic [2*WIDTH-1:0] multiplier_product;
 
     // State of FSM
     // 
@@ -87,7 +90,7 @@ module exponent_modulus #(
         .clk_in(clk_in),
         .rst_in(rst_in),
         .ready_in(modulus_ready),
-        .value_in(running_total),
+        .value_in(multiplier_product),
         .modulus_in(modulus_in),
         .value_out(modulus_result),
         .busy_out(modulus_busy),
@@ -201,7 +204,7 @@ module exponent_modulus #(
                             karat_ready <= 1'b1;
                         end else if (karat_valid) begin
                             // Output running total
-                            running_total <= karat_output;
+                            multiplier_product <= karat_output;
 
                             // Calculate modulus to prevent overflow
 
