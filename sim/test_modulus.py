@@ -72,10 +72,10 @@ async def test_modulus(dut):
         total_cycles += await test_mod(dut, value, modulus)
 
     # Average cycles
-    average_cycles = round(total_cycles/N, 2)
+    average_cycles = round(total_cycles/N, 3)
 
     # Average time
-    average_time = round(average_cycles / 1000, 2)
+    average_time = round(average_cycles / 1000, 3)
 
     print(f"Completed {N} tests in {average_cycles} cycles/test ({average_time} us/test)")
 

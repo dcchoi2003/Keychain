@@ -11,10 +11,10 @@ from cocotb.runner import get_runner
 from random import randint
 
 # Bit width
-WIDTH = 64
+WIDTH = 256
 
 # Number of tests
-N = 1
+N = 1000
 
 # Max input size
 MAX_INPUT_SIZE = pow(2, WIDTH) - 1
@@ -74,10 +74,10 @@ async def test_exponent_modulus(dut):
         total_cycles += await test_expmod(dut, base, exponent, modulus)
 
     # Average cycles
-    average_cycles = round(total_cycles/N, 2)
+    average_cycles = round(total_cycles/N, 3)
 
     # Average time
-    average_time = round(average_cycles / 1000, 2)
+    average_time = round(average_cycles / 1000, 3)
 
     print(f"Completed {N} tests in {average_cycles} cycles/test ({average_time} us/test)")
 
