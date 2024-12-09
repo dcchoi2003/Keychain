@@ -57,10 +57,10 @@ module top_level
    // BRAM Memory
    // We've configured this for you, but you'll need to hook up your address and data ports to the rest of your logic!
 
-   // 256-bit keys, no need for depth
-   parameter BRAM_WIDTH = 256;
+   // 256-bit (or size of WIDTH) keys, no need for depth
+   parameter BRAM_WIDTH = WIDTH;
    parameter BRAM_DEPTH = 1;
-   parameter ADDR_WIDTH = $clog2(BRAM_DEPTH);
+   parameter ADDR_WIDTH = 1; // $clog2(BRAM_DEPTH)
 
    // only using port a for reads: we only use dout
    logic [BRAM_WIDTH-1:0]     douta;
@@ -70,11 +70,12 @@ module top_level
    logic [BRAM_WIDTH-1:0]     dinb;
    logic [ADDR_WIDTH-1:0]     addrb;
 
-   xilinx_true_dual_port_read_first_2_clock_ram
+    // bram access for secret key
+    xilinx_true_dual_port_read_first_2_clock_ram
      #(.RAM_WIDTH(BRAM_WIDTH),
        .RAM_DEPTH(BRAM_DEPTH),
        .INIT_FILE(`FPATH(secret_key.mem))
-       ) key_bram
+     ) secret_key_bram
        (
         // PORT A
         .addra(addra),
@@ -96,9 +97,9 @@ module top_level
         .doutb() // we only use port B for writes!
         );
 
-       logic [7:0]                uart_data_in;
-   logic                      uart_data_valid;
-   logic                      uart_busy;
+        logic [7:0]                uart_data_in;
+        logic                      uart_data_valid;
+        logic                      uart_busy;
 
 
    // UART Transmitter to FTDI2232
@@ -133,6 +134,8 @@ module top_level
         .valid_out(expmod_valid)
     );
 
+    logic pull_key_from_bram;
+
     always_ff @(posedge clk_100mhz) begin
 
         if (sys_rst) begin
@@ -140,6 +143,18 @@ module top_level
             exponent <= 0;
             expmod_ready <= 0;
         end else begin
+
+            if (pull_key_from_bram) begin
+
+                exponent <= douta;
+
+            end else begin
+
+                
+
+            end
+
+
             if (!expmod_busy && !expmod_valid) begin
                 exponent <= 16'd72;
                 modulus <= 16'd1073;
