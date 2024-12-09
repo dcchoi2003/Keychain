@@ -15,7 +15,7 @@ module modulus #(
     );
 
     // Pipeline depth
-    localparam DEPTH = WIDTH;
+    localparam DEPTH = WIDTH + 1;
 
     // Index width
     localparam INDEX_WIDTH = $clog2(DEPTH);
@@ -33,14 +33,12 @@ module modulus #(
     logic [INDEX_WIDTH-1:0] index;
 
     // Value to subtract from intermediate
-    logic [WIDTH + DEPTH - 2:0] subtrahend;
+    logic [2*WIDTH + DEPTH - 1:0] subtrahend;
 
     // State
-    // 00 -> Idle
-    // 01 -> Doubling
-    // 10 -> Subtracting
-    // 11 -> Returning
-    logic [1:0] state;
+    // 0 -> Idle
+    // 1 -> Subtracting
+    logic state;
 
     always_ff @(posedge clk_in) begin
         if (rst_in) begin
@@ -50,25 +48,29 @@ module modulus #(
             busy_out <= 1'b0;
             intermediate <= 0;
             subtrahend <= 0;
-            state <= 2'b0;
+            state <= 1'b0;
             index <= 2'b0;
         end else begin
             case (state)
-                2'b00: begin
-                    // If READY is asserted, switch to the squaring state and load values
+                1'b0: begin
+                    // If READY is asserted, switch to the subtraction state and load values
                     if (ready_in) begin
                         state <= 2'b11;
                         intermediate[0] <= value_in;
                         busy_out <= 1'b1;
-                        subtrahend <= modulus_in << (DEPTH - 1);
+                        subtrahend <= modulus_in << (WIDTH + DEPTH - 1);
                     end
                 end
 
-                2'b11: begin                   
+                1'b1: begin                   
                     // Perform subtraction operations
 
                     // Subtract the relevant multiple of the modulus, if necessary
-                    if (intermediate[index] >= subtrahend) begin
+                    if (intermediate[index] >= (subtrahend << 1) + subtrahend) begin
+                        intermediate[index + 1] <= intermediate[index] - (subtrahend << 1) - subtrahend;
+                    end else if (intermediate[index] >= (subtrahend << 1)) begin
+                        intermediate[index + 1] <= intermediate[index] - (subtrahend << 1);
+                    end else if (intermediate[index] >= subtrahend) begin
                         intermediate[index + 1] <= intermediate[index] - subtrahend;
                     end else begin
                         intermediate[index + 1] <= intermediate[index];
@@ -76,7 +78,11 @@ module modulus #(
 
                     if (index == DEPTH-1) begin
                         // We're done
-                        if (intermediate[index] >= modulus_in) begin
+                        if (intermediate[index] >= (modulus_in << 1) + modulus_in) begin
+                            value_out <= intermediate[index] - (modulus_in << 1) - modulus_in;
+                        end else if (intermediate[index] >= (modulus_in << 1)) begin
+                            value_out <= intermediate[index] - (modulus_in << 1);
+                        end else if (intermediate[index] >= modulus_in) begin
                             value_out <= intermediate[index] - modulus_in;
                         end else begin
                             value_out <= intermediate[index];
@@ -95,18 +101,17 @@ module modulus #(
                         subtrahend <= 0;
 
                         // Return to IDLE
-                        state <= 2'b00;
+                        state <= 1'b0;
                     end else begin
                         // Increment the result index
                         index <= index + 1;
 
                         // Update the subtrahend
-                        subtrahend <= subtrahend >> 1;
+                        subtrahend <= subtrahend >> 2;
                     end
                 end
 
-                // If invalid state, go back to idle
-                default: state <= 2'b00;
+                // default case unnecessary
             endcase
         end
 
