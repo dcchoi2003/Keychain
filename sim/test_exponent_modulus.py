@@ -10,11 +10,14 @@ from cocotb.utils import get_sim_time as gst
 from cocotb.runner import get_runner
 from random import randint
 
-# Max input size
-MAX_INPUT_SIZE = 65535
+# Bit width
+WIDTH = 256
 
 # Number of tests
-N = 200
+N = 1
+
+# Max input size
+MAX_INPUT_SIZE = pow(2, WIDTH) - 1
 
 async def test_expmod(dut, base, exponent, modulus):
     start_time = gst("ns")
@@ -88,9 +91,9 @@ def is_runner():
     sources += [proj_path / "hdl" / "modulus.sv"]
     sources += [proj_path / "hdl" / "square.sv"]
     # sources += [proj_path / "hdl" / "karat_mult_recursion.sv"]
-    sources += [proj_path / "hdl" / "simple_square.sv"]
+    sources += [proj_path / "hdl" / "simple_mult.sv"]
     build_test_args = ["-Wall"]
-    parameters = {}
+    parameters = {"WIDTH": WIDTH}
     sys.path.append(str(proj_path / "sim"))
     runner = get_runner(sim)
     runner.build(

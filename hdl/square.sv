@@ -43,7 +43,7 @@ module square #(
     logic square_enable;
     logic square_valid;
 
-    simple_square #(
+    simple_mult #(
         .input_size(WIDTH)
     ) square_block (
         .input_1(value_in),

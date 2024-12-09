@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-module simple_square #(
+module simple_mult #(
         parameter input_size = 1024,
         parameter output_size = 2 * input_size
 )
