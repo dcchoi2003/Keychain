@@ -11,21 +11,21 @@ from cocotb.runner import get_runner
 from random import randint
 
 # Bit width
-WIDTH = 64
+WIDTH = 8
 
 # Number of tests
-N = 1
+N = 500
 
 # Max input size
-MAX_INPUT_SIZE = pow(2, WIDTH) - 1
+MAX_MODULUS_SIZE = pow(2, WIDTH) - 1
+MAX_INPUT_SIZE   = pow(2, 2*WIDTH) - 1
 
-async def test_expmod(dut, base, exponent, modulus):
+async def test_mod(dut, value, modulus):
     start_time = gst("ns")
 
-    print(f"Checking ({base}, {exponent}, {modulus}) ... ", end="")
+    print(f"Checking ({value}, {modulus}) ... ", end="")
 
-    dut.value_in.value = base
-    dut.exponent_in.value = exponent
+    dut.value_in.value = value
     dut.modulus_in.value = modulus
     dut.ready_in.value = 1
     await RisingEdge(dut.clk_in)
@@ -35,7 +35,7 @@ async def test_expmod(dut, base, exponent, modulus):
     # Wait another clock cycle
     await ClockCycles(dut.clk_in, 1)
 
-    assert dut.value_out == pow(base, exponent, modulus)
+    assert dut.value_out == value % modulus
 
     cycles = int((gst("ns") - start_time) / 10)
 
@@ -44,7 +44,7 @@ async def test_expmod(dut, base, exponent, modulus):
     return cycles
 
 @cocotb.test()
-async def test_exponent_modulus(dut):
+async def test_modulus(dut):
     # Start clock
     dut._log.info("Starting...")
     cocotb.start_soon(Clock(dut.clk_in, 10, units="ns").start())
@@ -52,7 +52,6 @@ async def test_exponent_modulus(dut):
     # Set all inputs to zero
     dut.value_in.value = 0
     dut.ready_in.value = 0
-    dut.exponent_in.value = 0
     dut.modulus_in.value = 0
 
     # Assert RESET
@@ -66,12 +65,11 @@ async def test_exponent_modulus(dut):
     # Send random data
     for _ in range(N):
         # Generate random numbers
-        exponent = randint(1, MAX_INPUT_SIZE)
-        modulus = randint(1, MAX_INPUT_SIZE)
-        base = randint(1, modulus)
+        modulus = randint(1, MAX_MODULUS_SIZE)
+        value = randint(1, MAX_INPUT_SIZE)
 
         # See if it calculates it correctly
-        total_cycles += await test_expmod(dut, base, exponent, modulus)
+        total_cycles += await test_mod(dut, value, modulus)
 
     # Average cycles
     average_cycles = round(total_cycles/N, 2)
@@ -87,18 +85,14 @@ def is_runner():
     sim = os.getenv("SIM", "icarus")
     proj_path = Path(__file__).resolve().parent.parent
     sys.path.append(str(proj_path / "sim" / "model"))
-    sources = [proj_path / "hdl" / "exponent_modulus.sv"]
-    sources += [proj_path / "hdl" / "modulus.sv"]
-    sources += [proj_path / "hdl" / "square.sv"]
-    # sources += [proj_path / "hdl" / "karat_mult_recursion.sv"]
-    sources += [proj_path / "hdl" / "simple_mult.sv"]
+    sources = [proj_path / "hdl" / "modulus.sv"]
     build_test_args = ["-Wall"]
     parameters = {"WIDTH": WIDTH}
     sys.path.append(str(proj_path / "sim"))
     runner = get_runner(sim)
     runner.build(
         sources=sources,
-        hdl_toplevel="exponent_modulus",
+        hdl_toplevel="modulus",
         always=True,
         build_args=build_test_args,
         parameters=parameters,
@@ -107,8 +101,8 @@ def is_runner():
     )
     run_test_args = []
     runner.test(
-        hdl_toplevel="exponent_modulus",
-        test_module="test_exponent_modulus",
+        hdl_toplevel="modulus",
+        test_module="test_modulus",
         test_args=run_test_args,
         waves=True
     )
