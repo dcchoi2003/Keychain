@@ -2,15 +2,15 @@
 `default_nettype none
 
 module simple_mult #(
-        parameter input_size = 1024,
-        parameter output_size = 2 * input_size
+        parameter INPUT_SIZE = 1024,
+        parameter OUTPUT_SIZE = 2 * INPUT_SIZE
 )
 (
         // data IOs
-        input   wire   [input_size-1:0]    input_1,
-        input   wire   [input_size-1:0]    input_2,
+        input   wire   [INPUT_SIZE-1:0]    input_1,
+        input   wire   [INPUT_SIZE-1:0]    input_2,
 
-        output  logic  [output_size-1:0]    result,
+        output  logic  [OUTPUT_SIZE-1:0]    result,
 
         // control IOs
         input   wire   clk_in,
@@ -21,8 +21,12 @@ module simple_mult #(
         output  logic  valid_out
 );
 
-    logic [input_size-1:0] leftover;
-    logic [$clog2(input_size)-1:0] shift;
+
+    localparam HALF_INPUT_SIZE = INPUT_SIZE / 2;
+
+    logic [HALF_INPUT_SIZE-1:0] leftover_1, leftover_2;
+    logic [$clog2(INPUT_SIZE)-1:0] shift_1, shift_2;
+    logic [OUTPUT_SIZE-1:0] result_1, result_2;
 
     typedef enum {AWAITING, MULTIPLYING} state_t;
 
@@ -42,11 +46,14 @@ module simple_mult #(
 
                 valid_out <= 1'b0;
                 result <= 0;
-                shift <= 0;
+                result_1 <= 0;
+                result_2 <= 0;
 
                 if (ready_in == 1'b1) begin
                     current_state <= MULTIPLYING;
-                    leftover <= input_2;
+                    {leftover_1, leftover_2} <= input_2;
+                    shift_1 <= HALF_INPUT_SIZE;
+                    shift_2 <= 0;
                     busy_out <= 1'b1;
                 end
 
@@ -54,17 +61,25 @@ module simple_mult #(
 
             MULTIPLYING: begin
 
-                if (leftover == 0) begin
+                if (leftover_1 == 0 && leftover_2 == 0) begin
                     busy_out <= 1'b0;
                     valid_out <= 1'b1;
+                    result <= result_1 + result_2;
                     current_state <= AWAITING;
                 end else begin
 
-                    leftover <= leftover >> 1;
-                    shift <= shift + 1'b1;
+                    leftover_1 <= leftover_1 >> 1;
+                    shift_1 <= shift_1 + 1'b1;
 
-                    if (leftover & 1'b1) begin
-                        result <= result + (input_1 << shift);
+                    if (leftover_1 & 1'b1) begin
+                        result_1 <= result_1 + (input_1 << shift_1);
+                    end
+
+                    leftover_2 <= leftover_2 >> 1;
+                    shift_2 <= shift_2 + 1'b1;
+
+                    if (leftover_2 & 1'b1) begin
+                        result_2 <= result_2 + (input_1 << shift_2);
                     end
 
                 end

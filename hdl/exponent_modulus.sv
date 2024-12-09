@@ -96,7 +96,7 @@ module exponent_modulus #(
 
     // Hardware multiplier
     simple_mult #(
-        .input_size(WIDTH)
+        .INPUT_SIZE(WIDTH)
     ) multiplier (
         .clk_in(clk_in),
         .rst_in(rst_in),

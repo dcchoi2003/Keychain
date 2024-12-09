@@ -44,7 +44,7 @@ module square #(
     logic square_valid;
 
     simple_mult #(
-        .input_size(WIDTH)
+        .INPUT_SIZE(WIDTH)
     ) square_block (
         .input_1(value_in),
         .input_2(value_in),
