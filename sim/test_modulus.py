@@ -11,10 +11,10 @@ from cocotb.runner import get_runner
 from random import randint
 
 # Bit width
-WIDTH = 8
+WIDTH = 256
 
 # Number of tests
-N = 500
+N = 200
 
 # Max input size
 MAX_MODULUS_SIZE = pow(2, WIDTH) - 1
