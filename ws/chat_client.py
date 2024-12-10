@@ -5,7 +5,7 @@ import serial
 import sys
 
 # set according to your system!
-SERIAL_PORTNAME = "/dev/ttyUSB1"
+SERIAL_PORTNAME = "/dev/cu.usbserial-88742923009F1"
 BAUD = 115200
 
 from websockets.client import connect
