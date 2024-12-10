@@ -27,19 +27,19 @@ module modulus #(
     assign valid_out = last_busy && !busy_out;
 
     // Intermediate results register
-    logic [DEPTH-1:0] [2*WIDTH-1:0] intermediate;
+    logic [DEPTH-1:0] [2*WIDTH + DEPTH - 1:0] intermediate;
 
     // Intermediate results index
     logic [INDEX_WIDTH-1:0] index;
 
     // Value to subtract from intermediate
-    logic [2*WIDTH + DEPTH:0] subtrahend;
+    logic [2*WIDTH + DEPTH - 1:0] subtrahend;
 
     // Three times the subtrahend
-    logic [2*WIDTH + DEPTH:0] thrice_subtrahend;
+    logic [2*WIDTH + DEPTH + 1:0] thrice_subtrahend;
 
-    // Three times the modulus
-    logic [2*WIDTH + DEPTH:0] thrice_modulus;
+    // Three times the modulus (two more bits)
+    logic [WIDTH + 1:0] thrice_modulus;
 
     // State
     // 0 -> Idle
