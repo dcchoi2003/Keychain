@@ -17,6 +17,9 @@ module modulus #(
     // Pipeline depth
     localparam DEPTH = WIDTH / 2;
 
+    // Subtrahend shifts
+    localparam SHIFT = 4 * (WIDTH/4 + DEPTH/4 - 1);
+
     // Index width
     localparam INDEX_WIDTH = $clog2(DEPTH);
 
@@ -58,7 +61,7 @@ module modulus #(
                         state <= 2'b11;
                         intermediate[0] <= value_in;
                         busy_out <= 1'b1;
-                        subtrahend <= modulus_in << (WIDTH + DEPTH - 1);
+                        subtrahend <= modulus_in << SHIFT;
                     end
                 end
 

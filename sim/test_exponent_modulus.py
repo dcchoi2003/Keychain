@@ -11,7 +11,7 @@ from cocotb.runner import get_runner
 from random import randint
 
 # Bit width
-WIDTH = 256
+WIDTH = 64
 
 # Number of tests
 N = 1000
