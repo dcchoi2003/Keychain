@@ -2,30 +2,28 @@
 `default_nettype none
 
 module exponent_modulus #(
-    parameter WIDTH = 16
+    parameter MSG_WIDTH = 8,
+    parameter KEY_WIDTH = 16
     ) (
     input wire clk_in,
     input wire rst_in,
     input wire ready_in,
-    input wire [WIDTH-1:0] value_in,
-    input wire [WIDTH-1:0] modulus_in,
-    input wire [WIDTH-1:0] exponent_in,
-    output logic [WIDTH-1:0] value_out,
+    input wire [MSG_WIDTH-1:0] value_in,
+    input wire [KEY_WIDTH-1:0] modulus_in,
+    input wire [KEY_WIDTH-1:0] exponent_in,
+    output logic [KEY_WIDTH-1:0] value_out,
     output logic busy_out,
     output logic valid_out
     );
 
     // Width of the exponent
-    localparam DEPTH = WIDTH;
-
-    // Depth of the Karatsuba multiplier
-    localparam STAGES = $clog2(WIDTH);
+    localparam DEPTH = KEY_WIDTH;
 
     // Width of the active index
-    localparam INDEX_WIDTH = $clog2(DEPTH);
+    localparam IDX_WIDTH = $clog2(DEPTH);
 
     // Intermediate results
-    logic [DEPTH-1:0][WIDTH-1:0] intermediate;
+    logic [DEPTH-1:0][KEY_WIDTH-1:0] intermediate;
 
     // Busy signal value during the last clock cycle
     logic last_busy;
@@ -37,29 +35,29 @@ module exponent_modulus #(
     logic square_ready, square_busy, square_valid;
 
     // Squaring block input and output registers
-    logic [WIDTH-1:0] square_input, square_output;
+    logic [KEY_WIDTH-1:0] square_input, square_output;
 
-    // Karatsuba block input and output registers
-    logic [WIDTH-1:0] karat_input_1, karat_input_2;
-    logic [2*WIDTH-1:0] karat_output;
+    // Multiplier block input and output registers
+    logic [KEY_WIDTH-1:0] mult_input_1, mult_input_2;
+    logic [2*KEY_WIDTH-1:0] mult_output;
 
-    // Karatsuba block control signals
-    logic karat_ready, karat_busy, karat_valid;
+    // Multiplier block control signals
+    logic mult_ready, mult_busy, mult_valid;
 
     // Modulus block control signals
     logic modulus_ready, modulus_busy, modulus_valid;
 
-    // Modulus result
-    logic [WIDTH-1:0] modulus_result;
+    // Modulus block result
+    logic [KEY_WIDTH-1:0] modulus_result;
 
     // Active index in intermediate results array
-    logic [INDEX_WIDTH-1:0] index;
+    logic [IDX_WIDTH-1:0] index;
 
     // Running total of output
-    logic [WIDTH-1:0] running_total;
+    logic [KEY_WIDTH-1:0] running_total;
     
     // Multiplier product
-    logic [2*WIDTH-1:0] multiplier_product;
+    logic [2*KEY_WIDTH-1:0] multiplier_product;
 
     // State of FSM
     // 
@@ -71,7 +69,7 @@ module exponent_modulus #(
 
     // Squaring block
     square #(
-        .WIDTH(WIDTH)
+        .WIDTH(KEY_WIDTH)
     ) square_block (
         .clk_in(clk_in),
         .rst_in(rst_in),
@@ -85,7 +83,7 @@ module exponent_modulus #(
 
     // Modulus block
     modulus #(
-        .WIDTH(WIDTH)
+        .WIDTH(KEY_WIDTH)
     ) modulus_block (
         .clk_in(clk_in),
         .rst_in(rst_in),
@@ -99,16 +97,16 @@ module exponent_modulus #(
 
     // Hardware multiplier
     simple_mult #(
-        .INPUT_SIZE(WIDTH)
+        .INPUT_SIZE(KEY_WIDTH)
     ) multiplier (
         .clk_in(clk_in),
         .rst_in(rst_in),
-        .ready_in(karat_ready),
-        .busy_out(karat_busy),
-        .valid_out(karat_valid),
-        .input_1(karat_input_1),
-        .input_2(karat_input_2),
-        .result(karat_output)
+        .ready_in(mult_ready),
+        .busy_out(mult_busy),
+        .valid_out(mult_valid),
+        .input_1(mult_input_1),
+        .input_2(mult_input_2),
+        .result(mult_output)
     );
 
     always_ff @(posedge clk_in) begin
@@ -124,9 +122,9 @@ module exponent_modulus #(
             index <= 0;
             value_out <= 0;
             modulus_ready <= 1'b0;
-            karat_ready <= 1'b0;
-            karat_input_1 <= 0;
-            karat_input_2 <= 0;
+            mult_ready <= 1'b0;
+            mult_input_1 <= 0;
+            mult_input_2 <= 0;
         end else begin
             case (state)
                 // Idle
@@ -195,16 +193,16 @@ module exponent_modulus #(
                 2'b10: begin
                     // Compute contribution from this index
                     if (exponent_in[index]) begin
-                        if (!karat_busy && !karat_valid) begin
-                            // Load inputs to Karatsuba block
-                            karat_input_1 <= running_total;
-                            karat_input_2 <= intermediate[index];
+                        if (!mult_busy && !mult_valid) begin
+                            // Load inputs to multiplier block
+                            mult_input_1 <= running_total;
+                            mult_input_2 <= intermediate[index];
 
-                            // Trigger Karatsuba block
-                            karat_ready <= 1'b1;
-                        end else if (karat_valid) begin
+                            // Trigger multiplier block
+                            mult_ready <= 1'b1;
+                        end else if (mult_valid) begin
                             // Output running total
-                            multiplier_product <= karat_output;
+                            multiplier_product <= mult_output;
 
                             // Calculate modulus to prevent overflow
 
@@ -263,9 +261,9 @@ module exponent_modulus #(
             modulus_ready <= 1'b0;
         end
 
-        // Karatsuba block trigger is one-cycle high only
-        if (karat_ready) begin
-            karat_ready <= 1'b0;
+        // Multiplier block trigger is one-cycle high only
+        if (mult_ready) begin
+            mult_ready <= 1'b0;
         end
     end
 
