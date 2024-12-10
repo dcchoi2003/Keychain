@@ -57,7 +57,6 @@ module uart_receive
                     receive_data <= 0;
                     count <= 0;
                     index <= 0;
-                    data_out <= 0;
                     valid_out <= 1'b0;
 
                     // If we're receiving data, go to the START state

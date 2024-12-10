@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
-| Date         : Mon Dec  9 23:07:10 2024
+| Date         : Tue Dec 10 00:26:18 2024
 | Host         : joseph-legion5 running 64-bit Linux Mint 22
 | Command      : report_timing -file obj/post_route_timing.rpt
 | Design       : top_level
@@ -12,20 +12,20 @@ Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanc
 
 Timing Report
 
-Slack (VIOLATED) :        -0.100ns  (required time - arrival time)
-  Source:                 expmod/square_block/modulus_block/index_reg[1]/C
+Slack (VIOLATED) :        -0.095ns  (required time - arrival time)
+  Source:                 expmod/modulus_block/index_reg[2]/C
                             (rising edge-triggered cell FDRE clocked by gclk  {rise@0.000ns fall@4.000ns period=10.000ns})
-  Destination:            expmod/square_block/modulus_block/intermediate_reg[36][19]/D
+  Destination:            expmod/modulus_block/intermediate_reg[20][1]/D
                             (rising edge-triggered cell FDRE clocked by gclk  {rise@0.000ns fall@4.000ns period=10.000ns})
   Path Group:             gclk
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            10.000ns  (gclk rise@10.000ns - gclk rise@0.000ns)
-  Data Path Delay:        9.895ns  (logic 2.930ns (29.612%)  route 6.965ns (70.388%))
-  Logic Levels:           16  (CARRY4=10 LUT3=1 LUT4=1 LUT5=1 LUT6=2 MUXF7=1)
-  Clock Path Skew:        -0.103ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    4.758ns = ( 14.758 - 10.000 ) 
-    Source Clock Delay      (SCD):    5.047ns
-    Clock Pessimism Removal (CPR):    0.186ns
+  Data Path Delay:        9.947ns  (logic 2.520ns (25.334%)  route 7.427ns (74.666%))
+  Logic Levels:           11  (CARRY4=6 LUT3=1 LUT4=1 LUT5=1 LUT6=1 MUXF7=1)
+  Clock Path Skew:        -0.021ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.762ns = ( 14.762 - 10.000 ) 
+    Source Clock Delay      (SCD):    5.054ns
+    Clock Pessimism Removal (CPR):    0.271ns
   Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
     Total System Jitter     (TSJ):    0.071ns
     Total Input Jitter      (TIJ):    0.000ns
@@ -40,54 +40,40 @@ Slack (VIOLATED) :        -0.100ns  (required time - arrival time)
     N15                  IBUF (Prop_ibuf_I_O)         1.440     1.440 r  clk_100mhz_IBUF_inst/O
                          net (fo=1, routed)           1.972     3.412    clk_100mhz_IBUF
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.508 r  clk_100mhz_IBUF_BUFG_inst/O
-                         net (fo=10652, routed)       1.539     5.047    expmod/square_block/modulus_block/clk_100mhz_IBUF_BUFG
-    SLICE_X37Y78         FDRE                                         r  expmod/square_block/modulus_block/index_reg[1]/C
+                         net (fo=5965, routed)        1.546     5.054    expmod/modulus_block/clk_100mhz_IBUF_BUFG
+    SLICE_X43Y66         FDRE                                         r  expmod/modulus_block/index_reg[2]/C
   -------------------------------------------------------------------    -------------------
-    SLICE_X37Y78         FDRE (Prop_fdre_C_Q)         0.456     5.503 r  expmod/square_block/modulus_block/index_reg[1]/Q
-                         net (fo=133, routed)         1.961     7.464    expmod/square_block/modulus_block/index[1]
-    SLICE_X52Y70         LUT6 (Prop_lut6_I2_O)        0.124     7.588 r  expmod/square_block/modulus_block/intermediate[64][20]_i_28/O
-                         net (fo=1, routed)           0.000     7.588    expmod/square_block/modulus_block/intermediate[64][20]_i_28_n_0
-    SLICE_X52Y70         MUXF7 (Prop_muxf7_I1_O)      0.247     7.835 r  expmod/square_block/modulus_block/intermediate_reg[64][20]_i_12/O
-                         net (fo=1, routed)           0.772     8.606    expmod/square_block/modulus_block/intermediate_reg[64][20]_i_12_n_0
-    SLICE_X49Y74         LUT6 (Prop_lut6_I5_O)        0.298     8.904 r  expmod/square_block/modulus_block/intermediate[64][20]_i_4/O
-                         net (fo=1, routed)           0.589     9.493    expmod/square_block/modulus_block/intermediate[64][20]_i_4_n_0
-    SLICE_X48Y77         LUT5 (Prop_lut5_I4_O)        0.124     9.617 r  expmod/square_block/modulus_block/intermediate[64][20]_i_2/O
-                         net (fo=5, routed)           0.839    10.457    expmod/square_block/modulus_block/intermediate[64][20]_i_2_n_0
-    SLICE_X42Y78         LUT4 (Prop_lut4_I0_O)        0.124    10.581 r  expmod/square_block/modulus_block/intermediate[64][63]_i_109/O
-                         net (fo=1, routed)           0.000    10.581    expmod/square_block/modulus_block/intermediate[64][63]_i_109_n_0
-    SLICE_X42Y78         CARRY4 (Prop_carry4_S[2]_CO[3])
-                                                      0.380    10.961 r  expmod/square_block/modulus_block/intermediate_reg[64][63]_i_94/CO[3]
-                         net (fo=1, routed)           0.000    10.961    expmod/square_block/modulus_block/intermediate_reg[64][63]_i_94_n_0
-    SLICE_X42Y79         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117    11.078 r  expmod/square_block/modulus_block/intermediate_reg[64][63]_i_85/CO[3]
-                         net (fo=1, routed)           0.000    11.078    expmod/square_block/modulus_block/intermediate_reg[64][63]_i_85_n_0
-    SLICE_X42Y80         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117    11.195 r  expmod/square_block/modulus_block/intermediate_reg[64][63]_i_76/CO[3]
-                         net (fo=1, routed)           0.000    11.195    expmod/square_block/modulus_block/intermediate_reg[64][63]_i_76_n_0
-    SLICE_X42Y81         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117    11.312 r  expmod/square_block/modulus_block/intermediate_reg[64][63]_i_67/CO[3]
-                         net (fo=1, routed)           0.000    11.312    expmod/square_block/modulus_block/intermediate_reg[64][63]_i_67_n_0
-    SLICE_X42Y82         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117    11.429 r  expmod/square_block/modulus_block/intermediate_reg[64][63]_i_58/CO[3]
-                         net (fo=1, routed)           0.000    11.429    expmod/square_block/modulus_block/intermediate_reg[64][63]_i_58_n_0
-    SLICE_X42Y83         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117    11.546 r  expmod/square_block/modulus_block/intermediate_reg[64][63]_i_53/CO[3]
-                         net (fo=1, routed)           0.000    11.546    expmod/square_block/modulus_block/intermediate_reg[64][63]_i_53_n_0
-    SLICE_X42Y84         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117    11.663 r  expmod/square_block/modulus_block/intermediate_reg[64][63]_i_48/CO[3]
-                         net (fo=1, routed)           0.000    11.663    expmod/square_block/modulus_block/intermediate_reg[64][63]_i_48_n_0
-    SLICE_X42Y85         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117    11.780 r  expmod/square_block/modulus_block/intermediate_reg[64][63]_i_27/CO[3]
-                         net (fo=1, routed)           0.000    11.780    expmod/square_block/modulus_block/intermediate_reg[64][63]_i_27_n_0
-    SLICE_X42Y86         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117    11.897 r  expmod/square_block/modulus_block/intermediate_reg[64][63]_i_14/CO[3]
-                         net (fo=1, routed)           0.000    11.897    expmod/square_block/modulus_block/intermediate_reg[64][63]_i_14_n_0
-    SLICE_X42Y87         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.117    12.014 r  expmod/square_block/modulus_block/intermediate_reg[64][63]_i_7/CO[3]
-                         net (fo=64, routed)          1.487    13.501    expmod/square_block/modulus_block/intermediate_reg[64][63]_i_7_n_0
-    SLICE_X39Y76         LUT3 (Prop_lut3_I2_O)        0.124    13.625 r  expmod/square_block/modulus_block/intermediate[64][19]_i_1/O
-                         net (fo=64, routed)          1.316    14.942    expmod/square_block/modulus_block/intermediate1_in[19]
-    SLICE_X15Y70         FDRE                                         r  expmod/square_block/modulus_block/intermediate_reg[36][19]/D
+    SLICE_X43Y66         FDRE (Prop_fdre_C_Q)         0.419     5.473 r  expmod/modulus_block/index_reg[2]/Q
+                         net (fo=559, routed)         2.263     7.736    expmod/modulus_block/index[2]
+    SLICE_X52Y89         MUXF7 (Prop_muxf7_S_O)       0.467     8.203 r  expmod/modulus_block/intermediate_reg[64][52]_i_11/O
+                         net (fo=1, routed)           0.742     8.944    expmod/modulus_block/intermediate_reg[64][52]_i_11_n_0
+    SLICE_X48Y85         LUT6 (Prop_lut6_I3_O)        0.297     9.241 r  expmod/modulus_block/intermediate[64][52]_i_4/O
+                         net (fo=1, routed)           0.719     9.960    expmod/modulus_block/intermediate[64][52]_i_4_n_0
+    SLICE_X47Y78         LUT5 (Prop_lut5_I4_O)        0.124    10.084 r  expmod/modulus_block/intermediate[64][52]_i_2/O
+                         net (fo=5, routed)           0.836    10.921    expmod/modulus_block/intermediate[64][52]_i_2_n_0
+    SLICE_X46Y71         LUT4 (Prop_lut4_I0_O)        0.124    11.045 r  expmod/modulus_block/intermediate[64][63]_i_73/O
+                         net (fo=1, routed)           0.000    11.045    expmod/modulus_block/intermediate[64][63]_i_73_n_0
+    SLICE_X46Y71         CARRY4 (Prop_carry4_S[2]_CO[3])
+                                                      0.380    11.425 r  expmod/modulus_block/intermediate_reg[64][63]_i_58/CO[3]
+                         net (fo=1, routed)           0.000    11.425    expmod/modulus_block/intermediate_reg[64][63]_i_58_n_0
+    SLICE_X46Y72         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117    11.542 r  expmod/modulus_block/intermediate_reg[64][63]_i_53/CO[3]
+                         net (fo=1, routed)           0.000    11.542    expmod/modulus_block/intermediate_reg[64][63]_i_53_n_0
+    SLICE_X46Y73         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117    11.659 r  expmod/modulus_block/intermediate_reg[64][63]_i_48/CO[3]
+                         net (fo=1, routed)           0.000    11.659    expmod/modulus_block/intermediate_reg[64][63]_i_48_n_0
+    SLICE_X46Y74         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117    11.776 r  expmod/modulus_block/intermediate_reg[64][63]_i_27/CO[3]
+                         net (fo=1, routed)           0.009    11.785    expmod/modulus_block/intermediate_reg[64][63]_i_27_n_0
+    SLICE_X46Y75         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117    11.902 r  expmod/modulus_block/intermediate_reg[64][63]_i_14/CO[3]
+                         net (fo=1, routed)           0.000    11.902    expmod/modulus_block/intermediate_reg[64][63]_i_14_n_0
+    SLICE_X46Y76         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117    12.019 r  expmod/modulus_block/intermediate_reg[64][63]_i_7/CO[3]
+                         net (fo=64, routed)          1.410    13.428    expmod/modulus_block/intermediate_reg[64][63]_i_7_n_0
+    SLICE_X41Y67         LUT3 (Prop_lut3_I2_O)        0.124    13.552 r  expmod/modulus_block/intermediate[64][1]_i_1/O
+                         net (fo=64, routed)          1.449    15.001    expmod/modulus_block/intermediate1_in[1]
+    SLICE_X40Y62         FDRE                                         r  expmod/modulus_block/intermediate_reg[20][1]/D
   -------------------------------------------------------------------    -------------------
 
                          (clock gclk rise edge)      10.000    10.000 r  
@@ -96,16 +82,16 @@ Slack (VIOLATED) :        -0.100ns  (required time - arrival time)
     N15                  IBUF (Prop_ibuf_I_O)         1.370    11.370 r  clk_100mhz_IBUF_inst/O
                          net (fo=1, routed)           1.868    13.238    clk_100mhz_IBUF
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.329 r  clk_100mhz_IBUF_BUFG_inst/O
-                         net (fo=10652, routed)       1.429    14.758    expmod/square_block/modulus_block/clk_100mhz_IBUF_BUFG
-    SLICE_X15Y70         FDRE                                         r  expmod/square_block/modulus_block/intermediate_reg[36][19]/C
-                         clock pessimism              0.186    14.944    
-                         clock uncertainty           -0.035    14.908    
-    SLICE_X15Y70         FDRE (Setup_fdre_C_D)       -0.067    14.841    expmod/square_block/modulus_block/intermediate_reg[36][19]
+                         net (fo=5965, routed)        1.433    14.762    expmod/modulus_block/clk_100mhz_IBUF_BUFG
+    SLICE_X40Y62         FDRE                                         r  expmod/modulus_block/intermediate_reg[20][1]/C
+                         clock pessimism              0.271    15.033    
+                         clock uncertainty           -0.035    14.997    
+    SLICE_X40Y62         FDRE (Setup_fdre_C_D)       -0.092    14.905    expmod/modulus_block/intermediate_reg[20][1]
   -------------------------------------------------------------------
-                         required time                         14.841    
-                         arrival time                         -14.942    
+                         required time                         14.905    
+                         arrival time                         -15.001    
   -------------------------------------------------------------------
-                         slack                                 -0.100    
+                         slack                                 -0.095    
 
 
 

@@ -26,7 +26,7 @@ BAUD = 115_200
 FREQ = 100_000_000
 
 def convert_bits_le(number):
-    return ('{0:0' + str(WIDTH) + 'b}').format(value)[::-1]
+    return ('{0:0' + str(WIDTH) + 'b}').format(number)[::-1]
 
 async def test_rx(dut, value):
     start_time = gst("ns")

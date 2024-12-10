@@ -53,3 +53,7 @@ set_property src_info {type:XDC file:1 line:39 export:INPUT save:INPUT read:READ
 set_property -dict {PACKAGE_PIN G2  IOSTANDARD LVCMOS33} [ get_ports "btn[2]" ]
 set_property src_info {type:XDC file:1 line:40 export:INPUT save:INPUT read:READ} [current_design]
 set_property -dict {PACKAGE_PIN H2  IOSTANDARD LVCMOS33} [ get_ports "btn[3]" ]
+set_property src_info {type:XDC file:1 line:148 export:INPUT save:INPUT read:READ} [current_design]
+set_property -dict {PACKAGE_PIN B16 IOSTANDARD LVCMOS33} [get_ports {uart_rxd}]
+set_property src_info {type:XDC file:1 line:149 export:INPUT save:INPUT read:READ} [current_design]
+set_property -dict {PACKAGE_PIN A16 IOSTANDARD LVCMOS33} [get_ports {uart_txd}]

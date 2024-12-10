@@ -70,8 +70,10 @@ module top_level (
     assign tx_data = result;
 
     // Assign ExpMod control signals
-    assign expmod_ready = rx_valid;
-    assign tx_ready = expmod_valid;
+    always_ff @(posedge clk_100mhz) begin
+        expmod_ready <= rx_valid;
+        tx_ready <= expmod_valid;
+    end
 
     // Synchronizer to prevent metastability
     logic uart_rx_buf0, uart_rx_buf1;
@@ -135,7 +137,7 @@ module top_level (
     // UART Transmitter
     uart_transmit #(
         .BAUD_RATE(BAUD),
-        .WIDTH(MSG_WIDTH)
+        .WIDTH(KEY_WIDTH)
     ) transmit (
         .clk_in(clk_100mhz),
         .rst_in(sys_rst),
