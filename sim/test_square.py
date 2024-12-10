@@ -8,14 +8,13 @@ from cocotb.clock import Clock
 from cocotb.triggers import Timer, ClockCycles, RisingEdge, FallingEdge, ReadOnly,with_timeout
 from cocotb.utils import get_sim_time as gst
 from cocotb.runner import get_runner
+from random import randint
 
-# utility function to reverse bits:
-def reverse_bits(n,size):
-    reversed_n = 0
-    for i in range(size):
-        reversed_n = (reversed_n << 1) | (n & 1)
-        n >>= 1
-    return reversed_n
+WIDTH = 256
+
+N = 100
+
+MAX_SIZE = pow(2, WIDTH) - 1
 
 @cocotb.test()
 async def test_square(dut):
@@ -26,30 +25,23 @@ async def test_square(dut):
     # Set all inputs to zero
     dut.value_in.value = 0
     dut.ready_in.value = 0
-    dut.modulus_in.value = 0
 
-    # Assert RESET
+    # Reset
     dut.rst_in.value = 1
-    await ClockCycles(dut.clk_in,3)
+    await ClockCycles(dut.clk_in, 3)
     dut.rst_in.value = 0
-
-    # Evaluate
-    dut.value_in.value = 3
-    dut.modulus_in.value = 7
-    dut.ready_in.value = 1
-    await RisingEdge(dut.clk_in)
-    dut.ready_in.value = 0
-    await ClockCycles(dut.clk_in,30)
-
-    # Evaluate
-    dut.value_in.value = 5
-    dut.modulus_in.value = 17
-    dut.ready_in.value = 1
-    await RisingEdge(dut.clk_in)
-    dut.ready_in.value = 0
-    await ClockCycles(dut.clk_in,30)
-
     
+    for i in range(N):
+        value = randint(1, MAX_SIZE)
+        print(f"Checking ({value}) ... ", end="")
+        dut.value_in.value = value
+        dut.ready_in.value = 1
+        await RisingEdge(dut.clk_in)
+        dut.ready_in.value = 0
+        await RisingEdge(dut.valid_out)
+        await ClockCycles(dut.clk_in, 1)
+        assert dut.square_out.value == value**2
+        print("OK")
 
 def is_runner():
     """Image Sprite Tester."""
@@ -58,9 +50,9 @@ def is_runner():
     proj_path = Path(__file__).resolve().parent.parent
     sys.path.append(str(proj_path / "sim" / "model"))
     sources = [proj_path / "hdl" / "square.sv"]
-    sources += [proj_path / "hdl" / "modulus.sv"]
+    sources += [proj_path / "hdl" / "simple_mult.sv"]
     build_test_args = ["-Wall"]
-    parameters = {}
+    parameters = {"WIDTH": WIDTH}
     sys.path.append(str(proj_path / "sim"))
     runner = get_runner(sim)
     runner.build(

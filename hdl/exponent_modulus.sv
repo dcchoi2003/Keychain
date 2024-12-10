@@ -31,12 +31,6 @@ module exponent_modulus #(
     // Combinationally assign valid signal from busy signal
     assign valid_out = last_busy && !busy_out;
 
-    // Squaring block control signals
-    logic square_ready, square_busy, square_valid;
-
-    // Squaring block input and output registers
-    logic [KEY_WIDTH-1:0] square_input, square_output;
-
     // Multiplier block input and output registers
     logic [KEY_WIDTH-1:0] mult_input_1, mult_input_2;
     logic [2*KEY_WIDTH-1:0] mult_output;
@@ -56,30 +50,17 @@ module exponent_modulus #(
     // Running total of output
     logic [KEY_WIDTH-1:0] running_total;
     
-    // Multiplier product
-    logic [2*KEY_WIDTH-1:0] multiplier_product;
+    // Modulus value input
+    logic [2*KEY_WIDTH-1:0] modulus_input;
 
     // State of FSM
     // 
-    // Idle:   00 (also return)
-    // Square: 01
-    // Mult:   10
-    // Mod:    11
-    logic [1:0] state;
-
-    // Squaring block
-    square #(
-        .WIDTH(KEY_WIDTH)
-    ) square_block (
-        .clk_in(clk_in),
-        .rst_in(rst_in),
-        .ready_in(square_ready),
-        .value_in(square_input),
-        .modulus_in(modulus_in),
-        .square_out(square_output),
-        .busy_out(square_busy),
-        .valid_out(square_valid)
-    );
+    // Idle:   000 (also return)
+    // Square: 001
+    // Mod:    010
+    // Mult:   011
+    // Mod:    100
+    logic [2:0] state;
 
     // Modulus block
     modulus #(
@@ -88,7 +69,7 @@ module exponent_modulus #(
         .clk_in(clk_in),
         .rst_in(rst_in),
         .ready_in(modulus_ready),
-        .value_in(multiplier_product),
+        .value_in(modulus_input),
         .modulus_in(modulus_in),
         .value_out(modulus_result),
         .busy_out(modulus_busy),
@@ -114,21 +95,20 @@ module exponent_modulus #(
             // Reset the block
             intermediate <= 0;
             busy_out <= 1'b0;
-            square_ready <= 1'b0;
             last_busy <= 1'b0;
             state <= 2'b00;
             running_total <= 1;
-            square_input <= 0;
             index <= 0;
             value_out <= 0;
             modulus_ready <= 1'b0;
             mult_ready <= 1'b0;
             mult_input_1 <= 0;
             mult_input_2 <= 0;
+            modulus_input <= 0;
         end else begin
             case (state)
                 // Idle
-                2'b00: begin
+                3'b000: begin
                     // See if we're returning
                     if (busy_out) begin
                         // We're no longer busy
@@ -140,14 +120,12 @@ module exponent_modulus #(
                         // Reset running total
                         running_total <= 1;
 
-                        // Reset intermediate
+                        // Reset intermediate & modulus input
                         intermediate <= 0;
+                        modulus_input <= 0;
 
                         // Reset index
                         index <= 0;
-
-                        // Switch to idle state
-                        state <= 2'b00;
                     end else if (ready_in) begin
                         // We're busy
                         busy_out <= 1'b1;
@@ -157,26 +135,43 @@ module exponent_modulus #(
                         intermediate[0] <= value_in;
 
                         // Switch to squaring state
-                        state <= 2'b01;
+                        state <= 3'b001;
                     end
                 end
 
                 // Square
-                2'b01: begin
-                    if (!square_valid && !square_busy) begin
-                        // Load input into squaring block
-                        square_input <= intermediate[index];
+                3'b001: begin
+                    if (!mult_busy && !mult_valid) begin
+                        // Load inputs to multiplier block
+                        mult_input_1 <= intermediate[index];
+                        mult_input_2 <= intermediate[index];
 
-                        // Trigger squaring block
-                        square_ready <= 1'b1;
-                    end else if (square_valid) begin
-                        // Store squared result
-                        intermediate[index + 1] <= square_output;
+                        // Trigger multiplier block
+                        mult_ready <= 1'b1;
+                    end else if (mult_valid) begin
+                        // Output running total
+                        modulus_input <= mult_output;
+
+                        // Calculate modulus to prevent overflow
+
+                        // Switch to square-modulus state
+                        state <= 3'b010;
+                    end
+                end
+
+                // Square Modulus
+                3'b010: begin
+                    if (!modulus_busy && !modulus_valid) begin
+                        // Trigger the modulus block
+                        modulus_ready <= 1'b1;
+                    end else if (modulus_valid) begin
+                        // Update the running product
+                        intermediate[index + 1] <= modulus_result;
 
                         // Check if we're done
                         if (index == DEPTH - 2 || exponent_in <= (1 << (index + 1))) begin
-                            // Switch to adding state
-                            state <= 2'b10;
+                            // Switch to multiplying state
+                            state <= 3'b011;
 
                             // Reset the index
                             index <= 0;
@@ -185,12 +180,15 @@ module exponent_modulus #(
 
                             // Increment the index
                             index <= index + 1;
+
+                            // Switch to squaring state
+                            state <= 3'b001;
                         end
                     end
                 end
 
                 // Multiply
-                2'b10: begin
+                3'b011: begin
                     // Compute contribution from this index
                     if (exponent_in[index]) begin
                         if (!mult_busy && !mult_valid) begin
@@ -202,18 +200,18 @@ module exponent_modulus #(
                             mult_ready <= 1'b1;
                         end else if (mult_valid) begin
                             // Output running total
-                            multiplier_product <= mult_output;
+                            modulus_input <= mult_output;
 
                             // Calculate modulus to prevent overflow
 
-                            // Switch to modulus state
-                            state <= 2'b11;
+                            // Switch to mult-modulus state
+                            state <= 3'b100;
                         end                        
                     end else begin
                         // Check if we're done
                         if (index == DEPTH - 1) begin
                             // Switch to idle/returning state
-                            state <= 2'b00;
+                            state <= 3'b000;
                         end else begin
                             // Go to the next index
                             index <= index + 1;
@@ -221,8 +219,8 @@ module exponent_modulus #(
                     end                    
                 end
 
-                // Modulus
-                2'b11: begin
+                // Multiply Modulus
+                3'b100: begin
                     if (!modulus_busy && !modulus_valid) begin
                         // Trigger the modulus block
                         modulus_ready <= 1'b1;
@@ -233,13 +231,13 @@ module exponent_modulus #(
                         // Check if we're done
                         if (index == DEPTH - 1) begin
                             // Switch to idle/returning state
-                            state <= 2'b00;
+                            state <= 3'b000;
                         end else begin
                             // Go to the next index
                             index <= index + 1;
 
                             // Switch to the multiplier state
-                            state <= 2'b10;
+                            state <= 3'b011;
                         end
                     end
                 end
@@ -250,11 +248,6 @@ module exponent_modulus #(
 
         // Update LASTBUSY register
         last_busy <= busy_out;
-
-        // Square block trigger is one-cycle high only
-        if (square_ready) begin
-            square_ready <= 1'b0;
-        end
 
         // Modulus block trigger is one-cycle high only
         if (modulus_ready) begin
