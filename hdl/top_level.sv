@@ -8,24 +8,21 @@ module top_level (
     // LEDs
     output logic [15:0] led,
 
-    // Switches (not useful for us?)
-    input wire [15:0]   sw,
-
     // Buttons (SYSRST)
-    input wire [3:0]    btn,
+    input wire          btn,
 
     // RGB LEDs
     output logic [2:0]  rgb0,
     output logic [2:0]  rgb1,
 
     // Seven-segment display
-    output logic [3:0]  ss0_an, // Anode control for upper four digits
-    output logic [3:0]  ss1_an, // Anode control for lower four digits
-    output logic [6:0]  ss0_c,  // Cathode control for the segments of upper four digits
-    output logic [6:0]  ss1_c,  // Cathode control for the segments of lower four digits
+    // output logic [3:0]  ss0_an, // Anode control for upper four digits
+    // output logic [3:0]  ss1_an, // Anode control for lower four digits
+    // output logic [6:0]  ss0_c,  // Cathode control for the segments of upper four digits
+    // output logic [6:0]  ss1_c,  // Cathode control for the segments of lower four digits
 
-    input wire      uart_rxd, // UART computer-FPGA
-	output logic    uart_txd  // UART FPGA-computer
+    input wire      uart_rxd, // UART RX: computer --> FPGA
+	output logic    uart_txd  // UART TX: FPGA     --> computer
     );
 
     // Bit width of a message
@@ -34,15 +31,46 @@ module top_level (
     // Bit width of a key
     localparam KEY_WIDTH = 32;
 
+    // Total UART message width
+    localparam UART_WIDTH = MSG_WIDTH + 2 * KEY_WIDTH;
+
+    // UART BAUD rate
+    localparam BAUD = 115_200;
+
     // Turn off those RGB LEDs
     assign rgb0 = 0;
     assign rgb1 = 0;
 
-    // Button D controlls SYSRST
+    // Button D controls SYSRST
     logic sys_rst;
     assign sys_rst = btn[0];
 
-    // Synchronizer
+    // UART RX control signal and data
+    logic rx_valid;
+    logic [UART_WIDTH-1:0] rx_data;
+
+    // UART TX control signals and data
+    logic [MSG_WIDTH-1:0] tx_data;
+    logic tx_ready;
+    logic tx_busy;
+
+    // ExpMod control signals
+    logic expmod_ready, expmod_busy, expmod_valid;
+
+    // ExpMod input and output signals
+    logic [MSG_WIDTH-1:0] value;
+    logic [KEY_WIDTH-1:0] modulus, exponent, result;
+
+    // Assign ExpMod inputs
+    assign value = rx_data[MSG_WIDTH-1:0];
+    assign exponent = rx_data[MSG_WIDTH+KEY_WIDTH-1:MSG_WIDTH];
+    assign modulus = rx_data[UART_WIDTH-1:MSG_WIDTH+KEY_WIDTH];
+
+    // Assign ExpMod control signals
+    assign expmod_ready = rx_valid;
+    assign tx_ready = expmod_valid;
+
+    // Synchronizer to prevent metastability
     logic uart_rx_buf0, uart_rx_buf1;
     always_ff @(posedge clk_100mhz) begin
         uart_rx_buf0 <= uart_rxd;
@@ -50,17 +78,44 @@ module top_level (
     end
 
     // UART Receiver
-    logic receiver_data_out;
-    logic [7:0] byte_out_data;
-
     uart_receive #(
-        .BAUD_RATE(115200)
+        .BAUD_RATE(BAUD),
+        .WIDTH(UART_WIDTH)
     ) receive (
         .clk_in(clk_100mhz),
         .rst_in(sys_rst),
         .rx_wire_in(uart_rx_buf1),
-        .new_data_out(receiver_data_out),
-        .data_byte_out(byte_out_data)
+        .new_data_out(rx_data),
+        .data_byte_out(rx_valid)
+    );
+
+    // ExpMod block
+    exponent_modulus #(
+        .KEY_WIDTH(KEY_WIDTH),
+        .MSG_WIDTH(MSG_WIDTH)
+    ) expmod (
+        .clk_in(clk_100mhz),
+        .rst_in(sys_rst),
+        .ready_in(expmod_ready),
+        .value_in(value),
+        .modulus_in(modulus),
+        .exponent_in(exponent),
+        .value_out(result),
+        .busy_out(expmod_busy),
+        .valid_out(expmod_valid)
+    );
+
+    // UART Transmitter
+    uart_transmit #(
+        .BAUD_RATE(BAUD),
+        .WIDTH(MSG_WIDTH)
+    ) transmit (
+        .clk_in(clk_100mhz),
+        .rst_in(sys_rst),
+        .data_byte_in(uart_data_in),
+        .trigger_in(tx_ready),
+        .busy_out(tx_busy),
+        .tx_wire_out(uart_txd)
     );
 
     // // BRAM Memory
@@ -91,44 +146,6 @@ module top_level (
     //     .regcea(1'b1),   // Output register enable
     //     .douta(douta)      // RAM output data, width determined from RAM_WIDTH
     // );
-
-    logic [7:0]                uart_data_in;
-    logic                      uart_data_valid;
-    logic                      uart_busy;
-
-    // UART Transmitter
-    uart_transmit #(
-        .BAUD_RATE(115200)
-    ) transmit (
-        .clk_in(clk_100mhz),
-        .rst_in(sys_rst),
-        .data_byte_in(uart_data_in),
-        .trigger_in(uart_data_valid),
-        .busy_out(uart_busy),
-        .tx_wire_out(uart_txd)
-    );
-
-    // ExpMod control signals
-    logic expmod_ready, expmod_busy, expmod_valid;
-
-    // Input and output signals
-    logic [MSG_WIDTH-1:0] value;
-    logic [KEY_WIDTH-1:0] modulus, exponent, result;
-
-    exponent_modulus #(
-        .KEY_WIDTH(KEY_WIDTH),
-        .MSG_WIDTH(MSG_WIDTH)
-    ) expmod (
-        .clk_in(clk_100mhz),
-        .rst_in(sys_rst),
-        .ready_in(expmod_ready),
-        .value_in(value),
-        .modulus_in(modulus),
-        .exponent_in(exponent),
-        .value_out(result),
-        .busy_out(expmod_busy),
-        .valid_out(expmod_valid)
-    );
 
     // logic pull_key_from_bram;
 
