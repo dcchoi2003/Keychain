@@ -9,7 +9,7 @@ module top_level (
     output logic [15:0] led,
 
     // Buttons (SYSRST)
-    input wire          btn,
+    input wire [3:0]    btn,
 
     // RGB LEDs
     output logic [2:0]  rgb0,
@@ -66,6 +66,9 @@ module top_level (
     assign exponent = rx_data[MSG_WIDTH+KEY_WIDTH-1:MSG_WIDTH];
     assign modulus = rx_data[UART_WIDTH-1:MSG_WIDTH+KEY_WIDTH];
 
+    // Assign ExpMod output
+    assign tx_data = result;
+
     // Assign ExpMod control signals
     assign expmod_ready = rx_valid;
     assign tx_ready = expmod_valid;
@@ -77,6 +80,30 @@ module top_level (
         uart_rx_buf1 <= uart_rx_buf0;
     end
 
+    // LED LFSR (just for show)
+    always_ff @(posedge clk_100mhz) begin
+        if (expmod_busy) begin
+            led[15] <= led[14];
+            led[14] <= led[13];
+            led[13] <= led[12];
+            led[12] <= led[11] ^ led[15];
+            led[11] <= led[10];
+            led[10] <= led[9];
+            led[9] <=  led[8];
+            led[8] <=  led[7] ^ led[15];
+            led[7] <=  led[6];
+            led[6] <=  led[5];
+            led[5] <=  led[4];
+            led[4] <=  led[3] ^ led[15];
+            led[3] <=  led[2];
+            led[2] <=  led[1];
+            led[1] <=  led[0];
+            led[0] <=  led[15];
+        end else begin
+            led <= 16'b0;
+        end
+    end
+
     // UART Receiver
     uart_receive #(
         .BAUD_RATE(BAUD),
@@ -85,8 +112,8 @@ module top_level (
         .clk_in(clk_100mhz),
         .rst_in(sys_rst),
         .rx_wire_in(uart_rx_buf1),
-        .new_data_out(rx_data),
-        .data_byte_out(rx_valid)
+        .valid_out(rx_valid),
+        .data_out(rx_data)
     );
 
     // ExpMod block
@@ -112,8 +139,8 @@ module top_level (
     ) transmit (
         .clk_in(clk_100mhz),
         .rst_in(sys_rst),
-        .data_byte_in(uart_data_in),
-        .trigger_in(tx_ready),
+        .data_in(tx_data),
+        .ready_in(tx_ready),
         .busy_out(tx_busy),
         .tx_wire_out(uart_txd)
     );

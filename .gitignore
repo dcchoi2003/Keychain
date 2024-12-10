@@ -13,3 +13,6 @@
 
 # Xilinx configuration data
 /.Xil
+
+# Clock information
+clockInfo.txt

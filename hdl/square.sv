@@ -57,7 +57,7 @@ module square #(
 
     // Modulus block
     modulus #(
-        .WIDTH(2*WIDTH)
+        .WIDTH(WIDTH)
     ) modulus_block (
         .clk_in(clk_in),
         .rst_in(rst_in),

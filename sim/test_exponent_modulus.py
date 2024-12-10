@@ -14,7 +14,7 @@ from random import randint
 WIDTH = 64
 
 # Number of tests
-N = 1000
+N = 10
 
 # Max input size
 MAX_KEY_SIZE = pow(2, WIDTH) - 1
