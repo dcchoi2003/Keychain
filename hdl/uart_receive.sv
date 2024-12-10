@@ -37,7 +37,7 @@ module uart_receive
     logic [PERIOD_WIDTH-1:0] count;
 
     // Define FSM
-    typedef enum {IDLE, START, DATA, STOP, TRANSMIT} state_t;
+    typedef enum {IDLE, START, WAIT, DATA, STOP, TRANSMIT} state_t;
     state_t state;
 
     always_ff @(posedge clk_in) begin
@@ -70,8 +70,7 @@ module uart_receive
                     if (count == HALF_BAUD) begin
                         if (!rx_wire_in) begin
                             // We are good to go!
-                            state <= DATA;
-                            count <= 0;
+                            state <= WAIT;
                         end else begin
                             // Invalid start bit
                             state <= IDLE;
@@ -81,11 +80,22 @@ module uart_receive
                     end
                 end
 
+                // Wait for the second half-bit
+                WAIT: begin
+                    if (count == BAUD_BIT_PERIOD - 1) begin
+                        // Start receiving data
+                        state <= DATA;
+                        count <= 0;
+                    end else begin
+                        count <= count + 1;
+                    end
+                end
+
                 // Receive data, one bit at a time
                 DATA: begin
-                    if (count == BAUD_BIT_PERIOD - 1) begin
+                    if (count == HALF_BAUD) begin
                         receive_data[index] <= rx_wire_in;
-
+                    end else if (count == BAUD_BIT_PERIOD - 1) begin
                         // Reset the count
                         count <= 0;
 
