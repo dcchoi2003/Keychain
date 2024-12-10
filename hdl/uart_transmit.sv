@@ -1,78 +1,120 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-module uart_transmit 
-  #(
-    parameter INPUT_CLOCK_FREQ = 100_000_000,
-    parameter BAUD_RATE = 9600
+module uart_transmit
+    #(
+        parameter INPUT_CLOCK_FREQ = 100_000_000,
+        parameter BAUD_RATE = 9600,
+        parameter WIDTH = 16
     )
-   (
-    input wire 	     clk_in,
-    input wire 	     rst_in,
-    input wire [7:0] data_byte_in,
-    input wire 	     trigger_in,
-    output logic     busy_out,
-    output logic     tx_wire_out
+    (
+        input wire clk_in,
+        input wire rst_in,
+        input wire ready_in,
+        input wire [WIDTH-1:0] data_in,
+        output logic busy_out,
+        output logic tx_wire_out
     );
-   
-   // TODO: module to transmit on UART
 
-   localparam BAUD_BIT_PERIOD = INPUT_CLOCK_FREQ / BAUD_RATE;
+    // Number of clock cycles per bit
+    localparam BAUD_BIT_PERIOD = INPUT_CLOCK_FREQ / BAUD_RATE;
 
-    logic [7:0] send_data;
-    logic [4:0] num_cycles;
-    logic [$clog2(BAUD_BIT_PERIOD)-1:0] period_count;
-    logic [2:0] step;
+    // Width of the bit period
+    localparam PERIOD_WIDTH = $clog2(BAUD_BIT_PERIOD);
 
-  always_ff @(posedge clk_in) begin
+    // Width of the bit index
+    localparam INDEX_WIDTH = $clog2(WIDTH);
+
+    // Data to be transmitted
+    logic [WIDTH-1:0] transmit_data;
+
+    // Index of the current bit
+    logic [INDEX_WIDTH-1:0] index;
+
+    // How far along are we in this period?
+    logic [PERIOD_WIDTH-1:0] count;
+
+    // Define FSM
+    typedef enum {IDLE, START, DATA, STOP} state_t;
+    state_t state;
+
+    always_ff @(posedge clk_in) begin
         if (rst_in) begin
-            busy_out <= 0;
+            // Reset
+            state <= IDLE;
+            transmit_data <= 0;
+            count <= 0;
+            index <= 0;
             tx_wire_out <= 1'b1;
-        end
-
-        if (trigger_in && ~busy_out) begin
-            busy_out <= 1'b1;
-            tx_wire_out <= 1'b0;
-            period_count <= 0;
-            num_cycles <= 0;
-            send_data <= data_byte_in;
-            step <= 2'b01;
-        end
-
-        else if (step == 2'b01) begin
-
-            if (period_count == BAUD_BIT_PERIOD) begin
-
-                if (num_cycles == 4'h8) begin
-                    step <= 2'b10;
+            busy_out <= 1'b0;
+        end else begin
+            case (state)
+                // Idle, wait for new data
+                IDLE: begin
+                    // Reset the block
+                    transmit_data <= 0;
+                    count <= 0;
+                    index <= 0;
                     tx_wire_out <= 1'b1;
-                    period_count <= 0;
-                
-                end else begin
+                    busy_out <= 1'b0;
 
-                    period_count <= 0;
-                    num_cycles <= num_cycles + 1'b1;
-                    tx_wire_out <= send_data[0];
-                    send_data <= send_data >> 1;
+                    // If we're receiving data, go to the START state
+                    if (ready_in) begin
+                        // We're busy!
+                        busy_out <= 1'b1;
 
+                        // Save input data
+                        transmit_data <= data_in;
+
+                        state <= START;
+                    end
                 end
 
-            end else begin
-                period_count <= period_count + 1'b1;
-            end
-        end
+                // Start, send a start bit
+                START: begin
+                    if (count == BAUD_BIT_PERIOD - 1) begin
+                        // Reset the count and begin sending data
+                        state <= DATA;
+                        count <= 0;
+                    end else begin
+                        count <= count + 1;
+                        tx_wire_out <= 1'b0;
+                    end
+                end
 
-        else if (step == 2'b10) begin
-            if (period_count == BAUD_BIT_PERIOD) begin
-                step <= 0;
-                busy_out <= 0;
-            end else begin
-                period_count <= period_count + 1'b1;
-            end
-        end
+                // Transmit data, one bit at a time
+                DATA: begin
+                    if (count == BAUD_BIT_PERIOD - 1) begin
+                        // Reset the count
+                        count <= 0;
 
+                        // Are we done yet?
+                        if (index == WIDTH - 1) begin
+                            state <= STOP;
+                        end else begin
+                            index <= index + 1;
+                        end
+                    end else begin
+                        count <= count + 1;
+                        tx_wire_out <= transmit_data[index];
+                    end
+                end
+
+                // Stop, send a stop bit
+                STOP: begin
+                    if (count == BAUD_BIT_PERIOD - 1) begin
+                        // All done!
+                        state <= IDLE;
+                    end else begin
+                        count <= count + 1;
+                        tx_wire_out <= 1'b1;
+                    end
+                end
+
+                default: state <= IDLE;
+            endcase
+        end
     end
-   
 endmodule // uart_transmit
 
 `default_nettype wire

@@ -26,9 +26,9 @@ BAUD = 115_200
 FREQ = 100_000_000
 
 def convert_bits_le(number):
-    return ('{0:0' + str(WIDTH) + 'b}').format(value)[::-1]
+    return ('{0:0' + str(WIDTH) + 'b}').format(number)[::-1]
 
-async def test_rx(dut, value):
+async def test_tx(dut, value):
     start_time = gst("ns")
 
     print(f"Checking ({value}) ... ", end="")
@@ -36,27 +36,27 @@ async def test_rx(dut, value):
     # Convert value to bits & reverse (LSB first)
     bits = convert_bits_le(value)
 
-    # Start bit
-    dut.rx_wire_in.value = 0
-    await ClockCycles(dut.clk_in, FREQ//BAUD)
+    # Set input and trigger transmission
+    dut.data_in.value = value
+    dut.ready_in.value = 1
     await RisingEdge(dut.clk_in)
+    dut.ready_in.value = 0
 
-    # Send each bit
+    await ClockCycles(dut.clk_in, FREQ//(2*BAUD))
+
+    # Start bit
+    assert dut.tx_wire_out == 0
+
+    # Check each bit
     for bit in bits:
-        dut.rx_wire_in.value = int(bit)
         await ClockCycles(dut.clk_in, FREQ//BAUD)
+        assert dut.tx_wire_out.value == int(bit)
         await RisingEdge(dut.clk_in)
 
     # Stop bit
-    dut.rx_wire_in.value = 1
-
-    # Wait for valid data
-    await RisingEdge(dut.valid_out)
-
-    # Wait another clock cycle
-    await ClockCycles(dut.clk_in, 1)
-
-    assert dut.data_out == value
+    await ClockCycles(dut.clk_in, FREQ//BAUD)
+    assert dut.tx_wire_out == 1
+    await ClockCycles(dut.clk_in, FREQ//(2*BAUD))
 
     cycles = int((gst("ns") - start_time) / 10)
 
@@ -65,13 +65,14 @@ async def test_rx(dut, value):
     return cycles
 
 @cocotb.test()
-async def test_uart_receive(dut):
+async def test_uart_transmit(dut):
     # Start clock
     dut._log.info("Starting...")
     cocotb.start_soon(Clock(dut.clk_in, 10, units="ns").start())
 
     # Set input
-    dut.rx_wire_in.value = 1
+    dut.ready_in.value = 0
+    dut.data_in.value = 0
 
     # Assert RESET
     dut.rst_in.value = 1
@@ -87,7 +88,7 @@ async def test_uart_receive(dut):
         value = randint(1, MAX_SIZE)
 
         # See if it calculates it correctly
-        total_cycles += await test_rx(dut, value)
+        total_cycles += await test_tx(dut, value)
 
     # Average cycles
     average_cycles = round(total_cycles/N, 3)
@@ -102,14 +103,14 @@ def is_runner():
     sim = os.getenv("SIM", "icarus")
     proj_path = Path(__file__).resolve().parent.parent
     sys.path.append(str(proj_path / "sim" / "model"))
-    sources = [proj_path / "hdl" / "uart_receive.sv"]
+    sources = [proj_path / "hdl" / "uart_transmit.sv"]
     build_test_args = ["-Wall"]
     parameters = {"WIDTH": WIDTH, "BAUD_RATE": BAUD, "INPUT_CLOCK_FREQ": FREQ}
     sys.path.append(str(proj_path / "sim"))
     runner = get_runner(sim)
     runner.build(
         sources=sources,
-        hdl_toplevel="uart_receive",
+        hdl_toplevel="uart_transmit",
         always=True,
         build_args=build_test_args,
         parameters=parameters,
@@ -118,8 +119,8 @@ def is_runner():
     )
     run_test_args = []
     runner.test(
-        hdl_toplevel="uart_receive",
-        test_module="test_uart_receive",
+        hdl_toplevel="uart_transmit",
+        test_module="test_uart_transmit",
         test_args=run_test_args,
         waves=True
     )

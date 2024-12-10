@@ -121,6 +121,8 @@ module uart_receive
                     data_out <= receive_data;
                     state <= IDLE;
                 end
+
+                default: state <= IDLE;
             endcase
         end
     end
