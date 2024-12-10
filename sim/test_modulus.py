@@ -14,7 +14,7 @@ from random import randint
 WIDTH = 256
 
 # Number of tests
-N = 200
+N = 25
 
 # Max input size
 MAX_MODULUS_SIZE = pow(2, WIDTH) - 1

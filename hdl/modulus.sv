@@ -15,7 +15,7 @@ module modulus #(
     );
 
     // Pipeline depth
-    localparam DEPTH = WIDTH + 1;
+    localparam DEPTH = 2*WIDTH + 1;
 
     // Index width
     localparam INDEX_WIDTH = $clog2(DEPTH);
@@ -27,19 +27,13 @@ module modulus #(
     assign valid_out = last_busy && !busy_out;
 
     // Intermediate results register
-    logic [DEPTH-1:0] [2*WIDTH + DEPTH - 1:0] intermediate;
+    logic [DEPTH-1:0] [2*WIDTH - 1:0] intermediate;
 
     // Intermediate results index
     logic [INDEX_WIDTH-1:0] index;
 
     // Value to subtract from intermediate
-    logic [2*WIDTH + DEPTH - 1:0] subtrahend;
-
-    // Three times the subtrahend
-    logic [2*WIDTH + DEPTH + 1:0] thrice_subtrahend;
-
-    // Three times the modulus (two more bits)
-    logic [WIDTH + 1:0] thrice_modulus;
+    logic [2*WIDTH + DEPTH - 2:0] subtrahend;
 
     // State
     // 0 -> Idle
@@ -54,10 +48,8 @@ module modulus #(
             busy_out <= 1'b0;
             intermediate <= 0;
             subtrahend <= 0;
-            thrice_subtrahend <= 0;
-            thrice_modulus <= 0;
             state <= 1'b0;
-            index <= 2'b0;
+            index <= 0;
         end else begin
             case (state)
                 1'b0: begin
@@ -66,9 +58,8 @@ module modulus #(
                         state <= 2'b11;
                         intermediate[0] <= value_in;
                         busy_out <= 1'b1;
-                        subtrahend <= modulus_in << (WIDTH + DEPTH - 1);
-                        thrice_subtrahend <= (modulus_in << (WIDTH + DEPTH)) + (modulus_in << (WIDTH + DEPTH - 1));
-                        thrice_modulus <= modulus_in + (modulus_in << 1);
+                        index <= 0;
+                        subtrahend <= modulus_in << (DEPTH - 1);
                     end
                 end
 
@@ -76,11 +67,7 @@ module modulus #(
                     // Perform subtraction operations
 
                     // Subtract the relevant multiple of the modulus, if necessary
-                    if (intermediate[index] >= thrice_subtrahend) begin
-                        intermediate[index + 1] <= intermediate[index] - thrice_subtrahend;
-                    end else if (intermediate[index] >= (subtrahend << 1)) begin
-                        intermediate[index + 1] <= intermediate[index] - (subtrahend << 1);
-                    end else if (intermediate[index] >= subtrahend) begin
+                    if (intermediate[index] >= subtrahend) begin
                         intermediate[index + 1] <= intermediate[index] - subtrahend;
                     end else begin
                         intermediate[index + 1] <= intermediate[index];
@@ -88,11 +75,7 @@ module modulus #(
 
                     if (index == DEPTH-1) begin
                         // We're done
-                        if (intermediate[index] >= thrice_modulus) begin
-                            value_out <= intermediate[index] - thrice_modulus;
-                        end else if (intermediate[index] >= (modulus_in << 1)) begin
-                            value_out <= intermediate[index] - (modulus_in << 1);
-                        end else if (intermediate[index] >= modulus_in) begin
+                        if (intermediate[index] >= modulus_in) begin
                             value_out <= intermediate[index] - modulus_in;
                         end else begin
                             value_out <= intermediate[index];
@@ -117,8 +100,7 @@ module modulus #(
                         index <= index + 1;
 
                         // Update the subtrahend
-                        subtrahend <= subtrahend >> 2;
-                        thrice_subtrahend <= thrice_subtrahend >> 2;
+                        subtrahend <= subtrahend >> 1;
                     end
                 end
 

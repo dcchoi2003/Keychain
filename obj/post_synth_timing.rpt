@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
-| Date         : Mon Dec  9 22:31:03 2024
+| Date         : Mon Dec  9 22:48:25 2024
 | Host         : joseph-legion5 running 64-bit Linux Mint 22
 | Command      : report_timing -file obj/post_synth_timing.rpt
 | Design       : top_level
@@ -12,16 +12,16 @@ Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanc
 
 Timing Report
 
-Slack (MET) :             0.873ns  (required time - arrival time)
-  Source:                 expmod/modulus_block/intermediate_reg[11][3]/C
+Slack (MET) :             0.395ns  (required time - arrival time)
+  Source:                 expmod/modulus_block/intermediate_reg[19][1]/C
                             (rising edge-triggered cell FDRE clocked by gclk  {rise@0.000ns fall@4.000ns period=10.000ns})
-  Destination:            expmod/modulus_block/intermediate_reg[10][56]/D
+  Destination:            expmod/modulus_block/intermediate_reg[10][94]/D
                             (rising edge-triggered cell FDRE clocked by gclk  {rise@0.000ns fall@4.000ns period=10.000ns})
   Path Group:             gclk
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            10.000ns  (gclk rise@10.000ns - gclk rise@0.000ns)
-  Data Path Delay:        8.976ns  (logic 3.668ns (40.865%)  route 5.308ns (59.135%))
-  Logic Levels:           19  (CARRY4=13 LUT2=1 LUT4=1 LUT6=4)
+  Data Path Delay:        9.454ns  (logic 4.942ns (52.274%)  route 4.512ns (47.726%))
+  Logic Levels:           30  (CARRY4=24 LUT4=1 LUT5=2 LUT6=3)
   Clock Path Skew:        -0.145ns (DCD - SCD + CPR)
     Destination Clock Delay (DCD):    2.660ns = ( 12.660 - 10.000 ) 
     Source Clock Delay      (SCD):    2.920ns
@@ -40,63 +40,96 @@ Slack (MET) :             0.873ns  (required time - arrival time)
     N15                  IBUF (Prop_ibuf_I_O)         1.440     1.440 r  clk_100mhz_IBUF_inst/O
                          net (fo=1, unplaced)         0.800     2.240    clk_100mhz_IBUF
                          BUFG (Prop_bufg_I_O)         0.096     2.336 r  clk_100mhz_IBUF_BUFG_inst/O
-                         net (fo=6809, unplaced)      0.584     2.920    expmod/modulus_block/clk_100mhz_IBUF_BUFG
-                         FDRE                                         r  expmod/modulus_block/intermediate_reg[11][3]/C
+                         net (fo=8937, unplaced)      0.584     2.920    expmod/modulus_block/clk_100mhz_IBUF_BUFG
+                         FDRE                                         r  expmod/modulus_block/intermediate_reg[19][1]/C
   -------------------------------------------------------------------    -------------------
-                         FDRE (Prop_fdre_C_Q)         0.456     3.376 r  expmod/modulus_block/intermediate_reg[11][3]/Q
-                         net (fo=1, unplaced)         0.965     4.341    expmod/modulus_block/intermediate_reg_n_0_[11][3]
-                         LUT6 (Prop_lut6_I0_O)        0.295     4.636 r  expmod/modulus_block/intermediate[32][3]_i_23__0/O
-                         net (fo=1, unplaced)         0.902     5.538    expmod/modulus_block/intermediate[32][3]_i_23__0_n_0
-                         LUT4 (Prop_lut4_I1_O)        0.124     5.662 r  expmod/modulus_block/intermediate[32][3]_i_8__0/O
-                         net (fo=2, unplaced)         0.460     6.122    expmod/modulus_block/intermediate[32][3]_i_8__0_n_0
-                         LUT6 (Prop_lut6_I1_O)        0.124     6.246 r  expmod/modulus_block/intermediate[32][3]_i_4__0/O
-                         net (fo=9, unplaced)         0.943     7.189    expmod/modulus_block/intermediate[32][3]_i_4__0_n_0
-                         LUT6 (Prop_lut6_I2_O)        0.124     7.313 r  expmod/modulus_block/intermediate[32][63]_i_317__0/O
-                         net (fo=1, unplaced)         0.639     7.952    expmod/modulus_block/intermediate[32][63]_i_317__0_n_0
+                         FDRE (Prop_fdre_C_Q)         0.456     3.376 r  expmod/modulus_block/intermediate_reg[19][1]/Q
+                         net (fo=1, unplaced)         0.965     4.341    expmod/modulus_block/intermediate_reg_n_0_[19][1]
+                         LUT6 (Prop_lut6_I0_O)        0.295     4.636 r  expmod/modulus_block/intermediate[32][1]_i_14__0/O
+                         net (fo=1, unplaced)         0.902     5.538    expmod/modulus_block/intermediate[32][1]_i_14__0_n_0
+                         LUT4 (Prop_lut4_I1_O)        0.124     5.662 r  expmod/modulus_block/intermediate[32][1]_i_7__0/O
+                         net (fo=2, unplaced)         0.460     6.122    expmod/modulus_block/intermediate[32][1]_i_7__0_n_0
+                         LUT5 (Prop_lut5_I4_O)        0.124     6.246 f  expmod/modulus_block/intermediate[32][3]_i_30__0/O
+                         net (fo=5, unplaced)         0.477     6.723    expmod/modulus_block/intermediate[32][3]_i_30__0_n_0
+                         LUT6 (Prop_lut6_I5_O)        0.124     6.847 r  expmod/modulus_block/intermediate[32][4]_i_13__0/O
+                         net (fo=1, unplaced)         0.639     7.486    expmod/modulus_block/intermediate[32][4]_i_13__0_n_0
                          CARRY4 (Prop_carry4_DI[1]_CO[3])
-                                                      0.507     8.459 r  expmod/modulus_block/intermediate_reg[32][63]_i_290__0/CO[3]
-                         net (fo=1, unplaced)         0.009     8.468    expmod/modulus_block/intermediate_reg[32][63]_i_290__0_n_0
+                                                      0.507     7.993 r  expmod/modulus_block/intermediate_reg[32][4]_i_5__0/CO[3]
+                         net (fo=1, unplaced)         0.009     8.002    expmod/modulus_block/intermediate_reg[32][4]_i_5__0_n_0
                          CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     8.582 r  expmod/modulus_block/intermediate_reg[32][63]_i_263__0/CO[3]
-                         net (fo=1, unplaced)         0.000     8.582    expmod/modulus_block/intermediate_reg[32][63]_i_263__0_n_0
+                                                      0.114     8.116 r  expmod/modulus_block/intermediate_reg[32][8]_i_5__0/CO[3]
+                         net (fo=1, unplaced)         0.000     8.116    expmod/modulus_block/intermediate_reg[32][8]_i_5__0_n_0
                          CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     8.696 r  expmod/modulus_block/intermediate_reg[32][63]_i_236__0/CO[3]
-                         net (fo=1, unplaced)         0.000     8.696    expmod/modulus_block/intermediate_reg[32][63]_i_236__0_n_0
+                                                      0.114     8.230 r  expmod/modulus_block/intermediate_reg[32][12]_i_5__0/CO[3]
+                         net (fo=1, unplaced)         0.000     8.230    expmod/modulus_block/intermediate_reg[32][12]_i_5__0_n_0
                          CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     8.810 r  expmod/modulus_block/intermediate_reg[32][63]_i_209__0/CO[3]
-                         net (fo=1, unplaced)         0.000     8.810    expmod/modulus_block/intermediate_reg[32][63]_i_209__0_n_0
+                                                      0.114     8.344 r  expmod/modulus_block/intermediate_reg[32][16]_i_5__0/CO[3]
+                         net (fo=1, unplaced)         0.000     8.344    expmod/modulus_block/intermediate_reg[32][16]_i_5__0_n_0
                          CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     8.924 r  expmod/modulus_block/intermediate_reg[32][63]_i_182__0/CO[3]
-                         net (fo=1, unplaced)         0.000     8.924    expmod/modulus_block/intermediate_reg[32][63]_i_182__0_n_0
+                                                      0.114     8.458 r  expmod/modulus_block/intermediate_reg[32][20]_i_5__0/CO[3]
+                         net (fo=1, unplaced)         0.000     8.458    expmod/modulus_block/intermediate_reg[32][20]_i_5__0_n_0
                          CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     9.038 r  expmod/modulus_block/intermediate_reg[32][63]_i_155__0/CO[3]
-                         net (fo=1, unplaced)         0.000     9.038    expmod/modulus_block/intermediate_reg[32][63]_i_155__0_n_0
+                                                      0.114     8.572 r  expmod/modulus_block/intermediate_reg[32][24]_i_5__0/CO[3]
+                         net (fo=1, unplaced)         0.000     8.572    expmod/modulus_block/intermediate_reg[32][24]_i_5__0_n_0
                          CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     9.152 r  expmod/modulus_block/intermediate_reg[32][63]_i_128__0/CO[3]
-                         net (fo=1, unplaced)         0.000     9.152    expmod/modulus_block/intermediate_reg[32][63]_i_128__0_n_0
+                                                      0.114     8.686 r  expmod/modulus_block/intermediate_reg[32][28]_i_5__0/CO[3]
+                         net (fo=1, unplaced)         0.000     8.686    expmod/modulus_block/intermediate_reg[32][28]_i_5__0_n_0
                          CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     9.266 r  expmod/modulus_block/intermediate_reg[32][63]_i_105__0/CO[3]
-                         net (fo=1, unplaced)         0.000     9.266    expmod/modulus_block/intermediate_reg[32][63]_i_105__0_n_0
+                                                      0.114     8.800 r  expmod/modulus_block/intermediate_reg[32][32]_i_5__0/CO[3]
+                         net (fo=1, unplaced)         0.000     8.800    expmod/modulus_block/intermediate_reg[32][32]_i_5__0_n_0
                          CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     9.380 r  expmod/modulus_block/intermediate_reg[32][63]_i_90__0/CO[3]
-                         net (fo=1, unplaced)         0.000     9.380    expmod/modulus_block/intermediate_reg[32][63]_i_90__0_n_0
+                                                      0.114     8.914 r  expmod/modulus_block/intermediate_reg[32][36]_i_5__0/CO[3]
+                         net (fo=1, unplaced)         0.000     8.914    expmod/modulus_block/intermediate_reg[32][36]_i_5__0_n_0
                          CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     9.494 r  expmod/modulus_block/intermediate_reg[32][63]_i_75__0/CO[3]
-                         net (fo=1, unplaced)         0.000     9.494    expmod/modulus_block/intermediate_reg[32][63]_i_75__0_n_0
+                                                      0.114     9.028 r  expmod/modulus_block/intermediate_reg[32][40]_i_5__0/CO[3]
+                         net (fo=1, unplaced)         0.000     9.028    expmod/modulus_block/intermediate_reg[32][40]_i_5__0_n_0
                          CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     9.608 r  expmod/modulus_block/intermediate_reg[32][63]_i_56__0/CO[3]
-                         net (fo=1, unplaced)         0.000     9.608    expmod/modulus_block/intermediate_reg[32][63]_i_56__0_n_0
+                                                      0.114     9.142 r  expmod/modulus_block/intermediate_reg[32][44]_i_5__0/CO[3]
+                         net (fo=1, unplaced)         0.000     9.142    expmod/modulus_block/intermediate_reg[32][44]_i_5__0_n_0
                          CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     9.722 r  expmod/modulus_block/intermediate_reg[32][63]_i_23__0/CO[3]
-                         net (fo=1, unplaced)         0.000     9.722    expmod/modulus_block/intermediate_reg[32][63]_i_23__0_n_0
-                         CARRY4 (Prop_carry4_CI_CO[0])
-                                                      0.293    10.015 r  expmod/modulus_block/intermediate_reg[32][63]_i_7__0/CO[0]
-                         net (fo=66, unplaced)        0.400    10.415    expmod/modulus_block/intermediate_reg[32][63]_i_7__0_n_3
-                         LUT2 (Prop_lut2_I1_O)        0.367    10.782 r  expmod/modulus_block/intermediate[32][62]_i_3__0/O
-                         net (fo=62, unplaced)        0.990    11.772    expmod/modulus_block/intermediate[32][62]_i_3__0_n_0
-                         LUT6 (Prop_lut6_I3_O)        0.124    11.896 r  expmod/modulus_block/intermediate[32][56]_i_1__0/O
-                         net (fo=32, unplaced)        0.000    11.896    expmod/modulus_block/intermediate1_in[56]
-                         FDRE                                         r  expmod/modulus_block/intermediate_reg[10][56]/D
+                                                      0.114     9.256 r  expmod/modulus_block/intermediate_reg[32][48]_i_5__0/CO[3]
+                         net (fo=1, unplaced)         0.000     9.256    expmod/modulus_block/intermediate_reg[32][48]_i_5__0_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     9.370 r  expmod/modulus_block/intermediate_reg[32][52]_i_5__0/CO[3]
+                         net (fo=1, unplaced)         0.000     9.370    expmod/modulus_block/intermediate_reg[32][52]_i_5__0_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     9.484 r  expmod/modulus_block/intermediate_reg[32][56]_i_5__0/CO[3]
+                         net (fo=1, unplaced)         0.000     9.484    expmod/modulus_block/intermediate_reg[32][56]_i_5__0_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     9.598 r  expmod/modulus_block/intermediate_reg[32][60]_i_5__0/CO[3]
+                         net (fo=1, unplaced)         0.000     9.598    expmod/modulus_block/intermediate_reg[32][60]_i_5__0_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     9.712 r  expmod/modulus_block/intermediate_reg[32][64]_i_5__0/CO[3]
+                         net (fo=1, unplaced)         0.000     9.712    expmod/modulus_block/intermediate_reg[32][64]_i_5__0_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     9.826 r  expmod/modulus_block/intermediate_reg[32][68]_i_5__0/CO[3]
+                         net (fo=1, unplaced)         0.000     9.826    expmod/modulus_block/intermediate_reg[32][68]_i_5__0_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     9.940 r  expmod/modulus_block/intermediate_reg[32][72]_i_4__0/CO[3]
+                         net (fo=1, unplaced)         0.000     9.940    expmod/modulus_block/intermediate_reg[32][72]_i_4__0_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    10.054 r  expmod/modulus_block/intermediate_reg[32][76]_i_5__0/CO[3]
+                         net (fo=1, unplaced)         0.000    10.054    expmod/modulus_block/intermediate_reg[32][76]_i_5__0_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    10.168 r  expmod/modulus_block/intermediate_reg[32][80]_i_5__0/CO[3]
+                         net (fo=1, unplaced)         0.000    10.168    expmod/modulus_block/intermediate_reg[32][80]_i_5__0_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    10.282 r  expmod/modulus_block/intermediate_reg[32][84]_i_5__0/CO[3]
+                         net (fo=1, unplaced)         0.000    10.282    expmod/modulus_block/intermediate_reg[32][84]_i_5__0_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    10.396 r  expmod/modulus_block/intermediate_reg[32][88]_i_5__0/CO[3]
+                         net (fo=1, unplaced)         0.000    10.396    expmod/modulus_block/intermediate_reg[32][88]_i_5__0_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    10.510 r  expmod/modulus_block/intermediate_reg[32][92]_i_5__0/CO[3]
+                         net (fo=1, unplaced)         0.000    10.510    expmod/modulus_block/intermediate_reg[32][92]_i_5__0_n_0
+                         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.348    10.858 r  expmod/modulus_block/intermediate_reg[32][96]_i_13/O[1]
+                         net (fo=1, unplaced)         0.611    11.469    expmod/modulus_block/p_3_in[94]
+                         LUT5 (Prop_lut5_I0_O)        0.332    11.801 r  expmod/modulus_block/intermediate[32][94]_i_2__0/O
+                         net (fo=1, unplaced)         0.449    12.250    expmod/modulus_block/intermediate[32][94]_i_2__0_n_0
+                         LUT6 (Prop_lut6_I0_O)        0.124    12.374 r  expmod/modulus_block/intermediate[32][94]_i_1__0/O
+                         net (fo=32, unplaced)        0.000    12.374    expmod/modulus_block/intermediate1_in[94]
+                         FDRE                                         r  expmod/modulus_block/intermediate_reg[10][94]/D
   -------------------------------------------------------------------    -------------------
 
                          (clock gclk rise edge)      10.000    10.000 r  
@@ -105,16 +138,16 @@ Slack (MET) :             0.873ns  (required time - arrival time)
     N15                  IBUF (Prop_ibuf_I_O)         1.370    11.370 r  clk_100mhz_IBUF_inst/O
                          net (fo=1, unplaced)         0.760    12.130    clk_100mhz_IBUF
                          BUFG (Prop_bufg_I_O)         0.091    12.221 r  clk_100mhz_IBUF_BUFG_inst/O
-                         net (fo=6809, unplaced)      0.439    12.660    expmod/modulus_block/clk_100mhz_IBUF_BUFG
-                         FDRE                                         r  expmod/modulus_block/intermediate_reg[10][56]/C
+                         net (fo=8937, unplaced)      0.439    12.660    expmod/modulus_block/clk_100mhz_IBUF_BUFG
+                         FDRE                                         r  expmod/modulus_block/intermediate_reg[10][94]/C
                          clock pessimism              0.115    12.775    
                          clock uncertainty           -0.035    12.740    
-                         FDRE (Setup_fdre_C_D)        0.029    12.769    expmod/modulus_block/intermediate_reg[10][56]
+                         FDRE (Setup_fdre_C_D)        0.029    12.769    expmod/modulus_block/intermediate_reg[10][94]
   -------------------------------------------------------------------
                          required time                         12.769    
-                         arrival time                         -11.896    
+                         arrival time                         -12.374    
   -------------------------------------------------------------------
-                         slack                                  0.873    
+                         slack                                  0.395    
 
 
 
