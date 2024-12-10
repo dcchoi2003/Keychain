@@ -61,18 +61,32 @@ module top_level (
     logic [MSG_WIDTH-1:0] value;
     logic [KEY_WIDTH-1:0] modulus, exponent, result;
 
+    // Received data
+    logic [UART_WIDTH-1:0] received_data;
+
+    // Data to transmit
+    logic [KEY_WIDTH-1:0] data_to_transmit;
+
     // Assign ExpMod inputs
-    assign value = rx_data[MSG_WIDTH-1:0];
-    assign exponent = rx_data[MSG_WIDTH+KEY_WIDTH-1:MSG_WIDTH];
-    assign modulus = rx_data[UART_WIDTH-1:MSG_WIDTH+KEY_WIDTH];
+    assign value = received_data[MSG_WIDTH-1:0];
+    assign exponent = received_data[MSG_WIDTH+KEY_WIDTH-1:MSG_WIDTH];
+    assign modulus = received_data[UART_WIDTH-1:MSG_WIDTH+KEY_WIDTH];
 
     // Assign ExpMod output
     assign tx_data = result;
 
     // Assign ExpMod control signals
     always_ff @(posedge clk_100mhz) begin
-        expmod_ready <= rx_valid;
-        tx_ready <= expmod_valid;
+        if (sys_rst) begin
+            expmod_ready <= 1'b0;
+            tx_ready <= 1'b0;
+        end else begin
+            expmod_ready <= rx_valid;
+            tx_ready <= expmod_valid;
+
+            if (rx_valid) received_data <= rx_data;
+            if (expmod_valid) data_to_transmit <= result;
+        end
     end
 
     // Synchronizer to prevent metastability
@@ -84,7 +98,9 @@ module top_level (
 
     // LED LFSR (just for show)
     always_ff @(posedge clk_100mhz) begin
-        if (expmod_busy) begin
+        if (sys_rst) begin
+            led <= 16'b1111_1111_1111_1111;
+        end else if (expmod_busy) begin
             led[15] <= led[14];
             led[14] <= led[13];
             led[13] <= led[12];
@@ -141,7 +157,7 @@ module top_level (
     ) transmit (
         .clk_in(clk_100mhz),
         .rst_in(sys_rst),
-        .data_in(tx_data),
+        .data_in(data_to_transmit),
         .ready_in(tx_ready),
         .busy_out(tx_busy),
         .tx_wire_out(uart_txd)
