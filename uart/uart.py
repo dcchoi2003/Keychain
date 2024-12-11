@@ -4,11 +4,11 @@ import serial
 from random import randint
 import time
 
-PORTNAME = "/dev/ttyUSB2"
+PORTNAME = "/dev/ttyUSB1"
 BAUD = 115200
 
-MSG_WIDTH = 16
-KEY_WIDTH = 32
+MSG_WIDTH = 8
+KEY_WIDTH = 16
 
 MAX_KEY_SIZE = pow(2, KEY_WIDTH)
 MAX_MSG_SIZE = pow(2, MSG_WIDTH)
