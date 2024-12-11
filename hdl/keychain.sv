@@ -4,7 +4,8 @@
 module keychain #(
     parameter KEY_BYTES = 4,
     parameter MSG_BYTES = 2,
-    parameter BAUD_RATE = 115_200
+    parameter BAUD_RATE = 115_200,
+    parameter INPUT_CLOCK_FREQ = 10_000_000
     ) (
     input wire clk_in,
     input wire rst_in,
@@ -33,7 +34,8 @@ module keychain #(
     deserializer #(
         .MSG_BYTES(MSG_BYTES),
         .KEY_BYTES(KEY_BYTES),
-        .BAUD_RATE(BAUD_RATE)
+        .BAUD_RATE(BAUD_RATE),
+        .INPUT_CLOCK_FREQ(INPUT_CLOCK_FREQ)
     ) receive (
         .clk_in(clk_in),
         .rst_in(rst_in),
@@ -69,7 +71,8 @@ module keychain #(
     // UART Transmitter
     serializer #(
         .BYTES(KEY_BYTES),
-        .BAUD_RATE(BAUD_RATE)
+        .BAUD_RATE(BAUD_RATE),
+        .INPUT_CLOCK_FREQ(INPUT_CLOCK_FREQ)
     ) transmit (
         .clk_in(clk_in),
         .rst_in(rst_in),

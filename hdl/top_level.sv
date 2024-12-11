@@ -33,10 +33,18 @@ module top_level (
     logic sys_rst;
     assign sys_rst = btn[0];
 
+    // Clocking wizard
+    clk_wiz_0 clock_wizard (
+        .clk_in1(clk_100mhz),
+        .clk_out1(clk_10mhz),
+        .reset(sys_rst),
+        .locked()
+    );
+
     // Hook up LEDs
-    always_ff @(posedge clk_100mhz) begin
+    always_ff @(posedge clk_10mhz) begin
         if (sys_rst) begin
-            led <= 16'b1;
+            led <= 16'b1111_1111_1111_1111;
         end else begin
             led <= 16'b0;
         end
