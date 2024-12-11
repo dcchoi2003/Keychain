@@ -33,6 +33,8 @@ module top_level (
     logic sys_rst;
     assign sys_rst = btn[0];
 
+    logic clk_10mhz;
+
     // Clocking wizard
     clk_wiz_0 clock_wizard (
         .clk_in1(clk_100mhz),
@@ -56,7 +58,7 @@ module top_level (
         .MSG_BYTES(1),
         .BAUD_RATE(115_200)
     ) keychain (
-        .clk_in(clk_100mhz),
+        .clk_in(clk_10mhz),
         .rst_in(sys_rst),
         .rx_wire_in(uart_rxd),
         .tx_wire_out(uart_txd)
