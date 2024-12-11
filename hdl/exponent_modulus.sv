@@ -8,10 +8,10 @@ module exponent_modulus #(
     input wire clk_in,
     input wire rst_in,
     input wire ready_in,
-    input wire [MSG_WIDTH-1:0] value_in,
-    input wire [KEY_WIDTH-1:0] modulus_in,
-    input wire [KEY_WIDTH-1:0] exponent_in,
-    output logic [KEY_WIDTH-1:0] value_out,
+    input wire [8*MSG_BYTES-1:0] value_in,
+    input wire [8*KEY_BYTES-1:0] modulus_in,
+    input wire [8*KEY_BYTES-1:0] exponent_in,
+    output logic [8*KEY_BYTES-1:0] value_out,
     output logic busy_out,
     output logic valid_out
     );
