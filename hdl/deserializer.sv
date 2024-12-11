@@ -11,7 +11,9 @@ module deserializer #(
     input wire rst_in,
     input wire rx_wire_in,
     output logic valid_out,
-    output logic [8*BYTES-1:0] data_out
+    output logic [8*MSG_BYTES-1:0] message_out,
+    output logic [8*KEY_BYTES-1:0] exponent_out,
+    output logic [8*KEY_BYTES-1:0] modulus_out
     );
 
     // Total bytes
@@ -50,7 +52,9 @@ module deserializer #(
     always_ff @(posedge clk_in) begin
         if (rst_in) begin
             // Reset the deserializer
-            data_out <= 0;
+            message_out <= 0;
+            exponent_out <= 0;
+            modulus_out <= 0;
             data <= 0;
             valid_out <= 1'b0;
             state <= 1'b0;
@@ -82,7 +86,9 @@ module deserializer #(
                 end
             end else begin
                 // Send our result
-                data_out <= data;
+                message_out <= data[8*BYTES-1 : 16*KEY_BYTES];
+                exponent_out <= data[16*KEY_BYTES-1 : 8*KEY_BYTES];
+                modulus_out <= data[8*KEY_BYTES-1 : 0];
 
                 // Send a valid signal
                 valid_out <= 1'b1;

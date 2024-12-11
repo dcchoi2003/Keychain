@@ -11,16 +11,16 @@ from cocotb.runner import get_runner
 from random import randint
 
 # Key width
-KEY_BYTES = 4
+KEY_BYTES = 2
 
 # Message width
-MSG_BYTES = 2
+MSG_BYTES = 1
 
 # Total bytes
 BYTES = 2 * KEY_BYTES + MSG_BYTES
 
 # Number of tests
-N = 5
+N = 25
 
 # Max input size
 MAX_KEY_SIZE = pow(2, 8*KEY_BYTES) - 1
@@ -53,6 +53,7 @@ async def test_rx(dut, value, exponent, modulus):
         byte = bits[8*i:8*i+8]
 
         # Start bit
+        await ClockCycles(dut.clk_in, FREQ//BAUD)
         dut.rx_wire_in.value = 0
         await ClockCycles(dut.clk_in, FREQ//BAUD)
         await RisingEdge(dut.clk_in)
@@ -65,20 +66,19 @@ async def test_rx(dut, value, exponent, modulus):
 
         # Stop bit
         dut.rx_wire_in.value = 1
-        await ClockCycles(dut.clk_in, FREQ//BAUD)
 
         i += 1
 
     # Wait for valid data
-    await ClockCycles(dut.clk_in, 1000)
+    await RisingEdge(dut.valid_out)
 
     # Wait another clock cycle
     await ClockCycles(dut.clk_in, 1)
 
-    # Correct result
-    correct_result = (value << 8*(2 * KEY_BYTES)) + (exponent << 8*KEY_BYTES) + modulus
-
-    assert dut.data_out == correct_result
+    # Check output values
+    assert dut.message_out == value
+    assert dut.exponent_out == exponent
+    assert dut.modulus_out == modulus
 
     cycles = int((gst("ns") - start_time) / 10)
 

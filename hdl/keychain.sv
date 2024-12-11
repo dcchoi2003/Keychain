@@ -2,8 +2,8 @@
 `default_nettype none
 
 module keychain #(
-    parameter KEY_WIDTH = 32,
-    parameter MSG_WIDTH = 16,
+    parameter KEY_BYTES = 4,
+    parameter MSG_BYTES = 2,
     parameter BAUD_RATE = 115_200
     ) (
     input wire clk_in,
@@ -26,15 +26,12 @@ module keychain #(
     logic [KEY_WIDTH-1:0] tx_data;
 
     // UART Receiver
-    uart_receive #(
+    deserializer #(
+        .MSG_BYTES(MSG_BYTES),
+        .KEY_BYTES(KEY_BYTES),
         .BAUD_RATE(BAUD_RATE),
-        .WIDTH(UART_WIDTH)
     ) receive (
-        .clk_in(clk_in),
-        .rst_in(rst_in),
-        .rx_wire_in(rx_wire_in),
-        .valid_out(rx_valid),
-        .data_out(rx_data)
+        
     );
 
     // ExpMod block
@@ -54,14 +51,14 @@ module keychain #(
     );
 
     // UART Transmitter
-    uart_transmit #(
+    serializer #(
+        .BYTES(KEY_BYTES)
         .BAUD_RATE(BAUD_RATE),
-        .WIDTH(KEY_WIDTH)
     ) transmit (
         .clk_in(clk_in),
         .rst_in(rst_in),
+        .ready_in(tx_ready),
         .data_in(tx_data),
-        .ready_in(expmod_valid),
         .busy_out(tx_busy),
         .tx_wire_out(tx_wire_out)
     );

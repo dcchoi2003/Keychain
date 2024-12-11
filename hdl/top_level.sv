@@ -123,15 +123,10 @@ module top_level (
     end
 
     // UART Receiver
-    uart_receive #(
-        .BAUD_RATE(BAUD),
-        .WIDTH(UART_WIDTH)
-    ) receive (
-        .clk_in(clk_100mhz),
-        .rst_in(sys_rst),
-        .rx_wire_in(uart_rx_buf1),
-        .valid_out(rx_valid),
-        .data_out(rx_data)
+    deserializer #(
+
+    ) uart_receiver (
+
     );
 
     // ExpMod block
@@ -151,16 +146,10 @@ module top_level (
     );
 
     // UART Transmitter
-    uart_transmit #(
-        .BAUD_RATE(BAUD),
-        .WIDTH(KEY_WIDTH)
-    ) transmit (
-        .clk_in(clk_100mhz),
-        .rst_in(sys_rst),
-        .data_in(data_to_transmit),
-        .ready_in(tx_ready),
-        .busy_out(tx_busy),
-        .tx_wire_out(uart_txd)
+    seralizer #(
+        .BYTES(KEY_WIDTH)
+    ) uart_transmitter (
+
     );
 
     // // BRAM Memory
