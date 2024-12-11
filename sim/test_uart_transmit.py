@@ -62,7 +62,7 @@ async def test_tx(dut, value):
         # Stop bit
         await ClockCycles(dut.clk_in, FREQ//BAUD)
         assert dut.tx_wire_out == 1
-        await ClockCycles(dut.clk_in, FREQ//BAUD)
+        await ClockCycles(dut.clk_in, 2*FREQ//BAUD)
 
         # Increment byte index
         i += 1

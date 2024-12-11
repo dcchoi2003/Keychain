@@ -19,7 +19,7 @@ module uart_transmit
     localparam BAUD_BIT_PERIOD = INPUT_CLOCK_FREQ / BAUD_RATE;
 
     // Width of the bit period
-    localparam PERIOD_WIDTH = $clog2(BAUD_BIT_PERIOD);
+    localparam PERIOD_WIDTH = $clog2(2*BAUD_BIT_PERIOD);
 
     // Data to be transmitted
     logic [7:0] transmit_data;
@@ -91,7 +91,7 @@ module uart_transmit
 
                 // Stop, send a stop bit
                 STOP: begin
-                    if (count == BAUD_BIT_PERIOD - 1) begin
+                    if (count == 2*BAUD_BIT_PERIOD - 1) begin
                         // All done!
                         state <= IDLE;
 
