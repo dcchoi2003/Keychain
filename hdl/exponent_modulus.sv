@@ -2,8 +2,8 @@
 `default_nettype none
 
 module exponent_modulus #(
-    parameter MSG_WIDTH = 8,
-    parameter KEY_WIDTH = 16
+    parameter MSG_BYTES = 2,
+    parameter KEY_BYTES = 4
     ) (
     input wire clk_in,
     input wire rst_in,
@@ -15,6 +15,12 @@ module exponent_modulus #(
     output logic busy_out,
     output logic valid_out
     );
+
+    // Width of the key
+    localparam KEY_WIDTH = 8 * KEY_BYTES;
+
+    // Width of the message
+    localparam MSG_WIDTH = 8 * MSG_BYTES;
 
     // Width of the exponent
     localparam DEPTH = KEY_WIDTH;

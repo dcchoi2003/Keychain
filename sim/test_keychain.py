@@ -10,18 +10,21 @@ from cocotb.utils import get_sim_time as gst
 from cocotb.runner import get_runner
 from random import randint
 
-# Key width
-KEY_WIDTH = 32
+# Key bytes
+KEY_BYTES = 16
 
-# Message width
-MSG_WIDTH = 16
+# Message bytes
+MSG_BYTES = 8
+
+# Total bytes
+BYTES = 2*KEY_BYTES + MSG_BYTES
 
 # Number of tests
 N = 1
 
 # Max input size
-MAX_KEY_SIZE = pow(2, KEY_WIDTH) - 1
-MAX_MSG_SIZE = pow(2, MSG_WIDTH) - 1
+MAX_KEY_SIZE = pow(2, 8*KEY_BYTES) - 1
+MAX_MSG_SIZE = pow(2, 8*MSG_BYTES) - 1
 
 # Baud rate
 BAUD = 921_600
@@ -38,55 +41,73 @@ async def encode_decode(dut, value, exponent, modulus):
     print(f"Checking ({value}, {exponent}, {modulus})...")
 
     # Convert value to bits & reverse (LSB first)
-    value_bits = convert_bits_le(value, MSG_WIDTH)
-    exponent_bits = convert_bits_le(exponent, KEY_WIDTH)
-    modulus_bits = convert_bits_le(modulus, KEY_WIDTH)
-    print(value_bits[::-1], exponent_bits[::-1], modulus_bits[::-1])
-    bits = value_bits + exponent_bits + modulus_bits
+    value_bits = convert_bits_le(value, 8*MSG_BYTES)
+    key_bits   = convert_bits_le(exponent, 8*KEY_BYTES)
+    mod_bits   = convert_bits_le(modulus, 8*KEY_BYTES)
+    bits = mod_bits + key_bits + value_bits
 
-    # Start bit
-    dut.rx_wire_in.value = 0
-    await ClockCycles(dut.clk_in, FREQ//BAUD)
-    await RisingEdge(dut.clk_in)
-    print("\tSending UART start bit")
+    # Initialize index
+    i = 0
 
-    # Send each bit
-    for i, bit in enumerate(bits):
-        dut.rx_wire_in.value = int(bit)
+    while i < BYTES:
+        byte = bits[8*i:8*i+8]
+
+        # Start bit
+        print("\tSending UART start bit")
+        await ClockCycles(dut.clk_in, FREQ//BAUD)
+        dut.rx_wire_in.value = 0
         await ClockCycles(dut.clk_in, FREQ//BAUD)
         await RisingEdge(dut.clk_in)
-        print(f"\tSending UART bit {i}")
 
-    # Stop bit
-    dut.rx_wire_in.value = 1
-    print(f"\tSending UART stop bit")
+        # Send each bit
+        for j, bit in enumerate(byte):
+            print(f"\tSending UART byte {i} bit {j}: {bit}")
+            dut.rx_wire_in.value = int(bit)
+            await ClockCycles(dut.clk_in, FREQ//BAUD)
+            await RisingEdge(dut.clk_in)
+
+        # Stop bit
+        print(f"\tSending UART stop bit")
+        dut.rx_wire_in.value = 1
+
+        i += 1
 
     # Wait for valid data
     print(f"\tAwaiting output ...")
-    await FallingEdge(dut.tx_wire_out)
-    await ClockCycles(dut.clk_in, FREQ//(2*BAUD))
-
-    # Assert start bit
-    assert dut.tx_wire_out == 0
-    print(f"\tReceived start bit!")
 
     # Convert output value to bits
     expected_output = pow(value, exponent, modulus)
-    expected_bits = convert_bits_le(expected_output, KEY_WIDTH)
+    expected_bits = convert_bits_le(expected_output, 8*KEY_BYTES)
 
-    # Check each bit
-    for i, bit in enumerate(expected_bits):
+    # Reset the index
+    i = 0
+
+    # Check bits
+    while i < KEY_BYTES:
+        # Get the expected byte
+        expected_byte = expected_bits[8*i:8*i+8]
+
+        # Receive start bit
+        await FallingEdge(dut.tx_wire_out)
+        await ClockCycles(dut.clk_in, FREQ//(2*BAUD))
+        assert dut.tx_wire_out == 0, "Expected start bit"
+        print(f"\tReceived start bit")
+
+        for j, bit in enumerate(expected_byte):
+            await ClockCycles(dut.clk_in, FREQ//BAUD)
+            assert dut.tx_wire_out.value == int(bit), f"Expected {bit} but got {dut.tx_wire_out.value}"
+            await RisingEdge(dut.clk_in)
+            print(f"\tReceived UART byte {i}, bit {j}: {bit}")
+
+        # Stop bit
         await ClockCycles(dut.clk_in, FREQ//BAUD)
-        assert dut.tx_wire_out.value == int(bit)
-        await RisingEdge(dut.clk_in)
-        print(f"\tReceived UART bit {i}")
+        assert dut.tx_wire_out == 1, "Expected stop bit"
+        print(f"\tReceived stop bit")
 
-    # Stop bit
-    await ClockCycles(dut.clk_in, FREQ//BAUD)
-    assert dut.tx_wire_out == 1
+        # Increment index
+        i += 1
+
     await ClockCycles(dut.clk_in, FREQ//(2*BAUD))
-    print(f"\tReceived stop bit")
-
     cycles = int((gst("ns") - start_time) / 10)
 
     print(f"OK in {cycles} cycles")
@@ -141,8 +162,10 @@ def is_runner():
     sources += [proj_path / "hdl" / "exponent_modulus.sv"]
     sources += [proj_path / "hdl" / "modulus.sv"]
     sources += [proj_path / "hdl" / "simple_mult.sv"]
+    sources += [proj_path / "hdl" / "serializer.sv"]
+    sources += [proj_path / "hdl" / "deserializer.sv"]
     build_test_args = ["-Wall"]
-    parameters = {"KEY_WIDTH": KEY_WIDTH, "MSG_WIDTH": MSG_WIDTH, "BAUD_RATE": BAUD}
+    parameters = {"KEY_BYTES": KEY_BYTES, "MSG_BYTES": MSG_BYTES, "BAUD_RATE": BAUD}
     sys.path.append(str(proj_path / "sim"))
     runner = get_runner(sim)
     runner.build(
