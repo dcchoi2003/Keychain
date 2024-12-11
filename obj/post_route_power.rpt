@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
-| Date             : Tue Dec 10 01:02:35 2024
+| Date             : Tue Dec 10 21:59:19 2024
 | Host             : joseph-legion5 running 64-bit Linux Mint 22
 | Command          : report_power -file obj/post_route_power.rpt
 | Design           : top_level
@@ -30,10 +30,10 @@ Table of Contents
 ----------
 
 +--------------------------+--------------+
-| Total On-Chip Power (W)  | 0.118        |
+| Total On-Chip Power (W)  | 0.119        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 0.046        |
+| Dynamic (W)              | 0.048        |
 | Device Static (W)        | 0.072        |
 | Effective TJA (C/W)      | 4.9          |
 | Max Ambient (C)          | 84.4         |
@@ -53,16 +53,16 @@ Table of Contents
 | On-Chip        | Power (W) | Used     | Available | Utilization (%) |
 +----------------+-----------+----------+-----------+-----------------+
 | Clocks         |     0.009 |        3 |       --- |             --- |
-| Slice Logic    |     0.009 |    10206 |       --- |             --- |
-|   LUT as Logic |     0.008 |     2771 |     32600 |            8.50 |
+| Slice Logic    |     0.009 |    10009 |       --- |             --- |
+|   LUT as Logic |     0.008 |     2690 |     32600 |            8.25 |
 |   CARRY4       |    <0.001 |       97 |      8150 |            1.19 |
 |   F7/F8 Muxes  |    <0.001 |      645 |     32600 |            1.98 |
-|   Register     |    <0.001 |     6144 |     65200 |            9.42 |
-|   Others       |     0.000 |       10 |       --- |             --- |
-| Signals        |     0.028 |     7824 |       --- |             --- |
+|   Register     |    <0.001 |     6040 |     65200 |            9.26 |
+|   Others       |     0.000 |       15 |       --- |             --- |
+| Signals        |     0.029 |     7672 |       --- |             --- |
 | I/O            |    <0.001 |       26 |       210 |           12.38 |
 | Static Power   |     0.072 |          |           |                 |
-| Total          |     0.118 |          |           |                 |
+| Total          |     0.119 |          |           |                 |
 +----------------+-----------+----------+-----------+-----------------+
 
 
@@ -72,7 +72,7 @@ Table of Contents
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
 | Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) | Powerup (A) | Budget (A)  | Margin (A) |
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
-| Vccint    |       1.000 |     0.056 |       0.046 |      0.010 |       NA    | Unspecified | NA         |
+| Vccint    |       1.000 |     0.057 |       0.047 |      0.010 |       NA    | Unspecified | NA         |
 | Vccaux    |       1.800 |     0.013 |       0.000 |      0.013 |       NA    | Unspecified | NA         |
 | Vcco33    |       3.300 |     0.001 |       0.000 |      0.001 |       NA    | Unspecified | NA         |
 | Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
@@ -136,14 +136,14 @@ Table of Contents
 3.1 By Hierarchy
 ----------------
 
-+-------------------+-----------+
-| Name              | Power (W) |
-+-------------------+-----------+
-| top_level         |     0.046 |
-|   expmod          |     0.044 |
-|     modulus_block |     0.036 |
-|     multiplier    |     0.005 |
-|   receive         |     0.001 |
-+-------------------+-----------+
++---------------------+-----------+
+| Name                | Power (W) |
++---------------------+-----------+
+| top_level           |     0.048 |
+|   keychain          |     0.047 |
+|     expmod          |     0.046 |
+|       modulus_block |     0.038 |
+|       multiplier    |     0.005 |
++---------------------+-----------+
 
 

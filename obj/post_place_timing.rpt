@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
-| Date         : Tue Dec 10 01:00:36 2024
+| Date         : Tue Dec 10 21:56:49 2024
 | Host         : joseph-legion5 running 64-bit Linux Mint 22
 | Command      : report_timing -file obj/post_place_timing.rpt
 | Design       : top_level
@@ -12,20 +12,20 @@ Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanc
 
 Timing Report
 
-Slack (MET) :             0.379ns  (required time - arrival time)
-  Source:                 expmod/modulus_block/intermediate_reg[25][0]/C
+Slack (MET) :             0.523ns  (required time - arrival time)
+  Source:                 keychain/expmod/modulus_block/index_reg[1]_rep__1/C
                             (rising edge-triggered cell FDRE clocked by gclk  {rise@0.000ns fall@4.000ns period=10.000ns})
-  Destination:            expmod/modulus_block/intermediate_reg[13][61]/D
+  Destination:            keychain/expmod/modulus_block/intermediate_reg[3][61]/D
                             (rising edge-triggered cell FDRE clocked by gclk  {rise@0.000ns fall@4.000ns period=10.000ns})
   Path Group:             gclk
   Path Type:              Setup (Max at Slow Process Corner)
   Requirement:            10.000ns  (gclk rise@10.000ns - gclk rise@0.000ns)
-  Data Path Delay:        9.241ns  (logic 4.157ns (44.984%)  route 5.084ns (55.016%))
+  Data Path Delay:        9.327ns  (logic 4.127ns (44.248%)  route 5.200ns (55.752%))
   Logic Levels:           22  (CARRY4=16 LUT2=1 LUT3=1 LUT5=1 LUT6=2 MUXF7=1)
-  Clock Path Skew:        -0.097ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    4.941ns = ( 14.941 - 10.000 ) 
-    Source Clock Delay      (SCD):    5.228ns
-    Clock Pessimism Removal (CPR):    0.191ns
+  Clock Path Skew:        -0.034ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    4.840ns = ( 14.840 - 10.000 ) 
+    Source Clock Delay      (SCD):    5.055ns
+    Clock Pessimism Removal (CPR):    0.182ns
   Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
     Total System Jitter     (TSJ):    0.071ns
     Total Input Jitter      (TIJ):    0.000ns
@@ -40,72 +40,72 @@ Slack (MET) :             0.379ns  (required time - arrival time)
     N15                  IBUF (Prop_ibuf_I_O)         1.440     1.440 r  clk_100mhz_IBUF_inst/O
                          net (fo=1, estimated)        1.972     3.412    clk_100mhz_IBUF
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.096     3.508 r  clk_100mhz_IBUF_BUFG_inst/O
-                         net (fo=6144, estimated)     1.720     5.228    expmod/modulus_block/clk_100mhz_IBUF_BUFG
-    SLICE_X36Y129        FDRE                                         r  expmod/modulus_block/intermediate_reg[25][0]/C
+                         net (fo=6040, estimated)     1.547     5.055    keychain/expmod/modulus_block/clk_100mhz_IBUF_BUFG
+    SLICE_X43Y86         FDRE                                         r  keychain/expmod/modulus_block/index_reg[1]_rep__1/C
   -------------------------------------------------------------------    -------------------
-    SLICE_X36Y129        FDRE (Prop_fdre_C_Q)         0.456     5.684 r  expmod/modulus_block/intermediate_reg[25][0]/Q
-                         net (fo=1, estimated)        1.097     6.781    expmod/modulus_block/intermediate_reg_n_0_[25][0]
-    SLICE_X32Y120        LUT6 (Prop_lut6_I3_O)        0.124     6.905 r  expmod/modulus_block/intermediate[64][0]_i_21/O
-                         net (fo=1, routed)           0.000     6.905    expmod/modulus_block/intermediate[64][0]_i_21_n_0
-    SLICE_X32Y120        MUXF7 (Prop_muxf7_I0_O)      0.238     7.143 r  expmod/modulus_block/intermediate_reg[64][0]_i_9/O
-                         net (fo=1, estimated)        0.808     7.951    expmod/modulus_block/intermediate_reg[64][0]_i_9_n_0
-    SLICE_X34Y121        LUT6 (Prop_lut6_I0_O)        0.298     8.249 r  expmod/modulus_block/intermediate[64][0]_i_4/O
-                         net (fo=1, estimated)        0.656     8.905    expmod/modulus_block/intermediate[64][0]_i_4_n_0
-    SLICE_X34Y114        LUT5 (Prop_lut5_I4_O)        0.124     9.029 r  expmod/modulus_block/intermediate[64][0]_i_2/O
-                         net (fo=5, estimated)        0.573     9.602    expmod/modulus_block/intermediate[64][0]_i_2_n_0
-    SLICE_X35Y112        LUT2 (Prop_lut2_I0_O)        0.124     9.726 r  expmod/modulus_block/intermediate[64][3]_i_7/O
-                         net (fo=1, routed)           0.000     9.726    expmod/modulus_block/intermediate[64][3]_i_7_n_0
-    SLICE_X35Y112        CARRY4 (Prop_carry4_S[0]_CO[3])
-                                                      0.532    10.258 r  expmod/modulus_block/intermediate_reg[64][3]_i_2/CO[3]
-                         net (fo=1, estimated)        0.000    10.258    expmod/modulus_block/intermediate_reg[64][3]_i_2_n_0
-    SLICE_X35Y113        CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114    10.372 r  expmod/modulus_block/intermediate_reg[64][7]_i_2/CO[3]
-                         net (fo=1, estimated)        0.000    10.372    expmod/modulus_block/intermediate_reg[64][7]_i_2_n_0
-    SLICE_X35Y114        CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114    10.486 r  expmod/modulus_block/intermediate_reg[64][11]_i_2/CO[3]
-                         net (fo=1, estimated)        0.000    10.486    expmod/modulus_block/intermediate_reg[64][11]_i_2_n_0
-    SLICE_X35Y115        CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114    10.600 r  expmod/modulus_block/intermediate_reg[64][15]_i_2/CO[3]
-                         net (fo=1, estimated)        0.000    10.600    expmod/modulus_block/intermediate_reg[64][15]_i_2_n_0
-    SLICE_X35Y116        CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114    10.714 r  expmod/modulus_block/intermediate_reg[64][19]_i_2/CO[3]
-                         net (fo=1, estimated)        0.000    10.714    expmod/modulus_block/intermediate_reg[64][19]_i_2_n_0
-    SLICE_X35Y117        CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114    10.828 r  expmod/modulus_block/intermediate_reg[64][23]_i_2/CO[3]
-                         net (fo=1, estimated)        0.000    10.828    expmod/modulus_block/intermediate_reg[64][23]_i_2_n_0
-    SLICE_X35Y118        CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114    10.942 r  expmod/modulus_block/intermediate_reg[64][27]_i_2/CO[3]
-                         net (fo=1, estimated)        0.000    10.942    expmod/modulus_block/intermediate_reg[64][27]_i_2_n_0
-    SLICE_X35Y119        CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114    11.056 r  expmod/modulus_block/intermediate_reg[64][31]_i_2/CO[3]
-                         net (fo=1, estimated)        0.000    11.056    expmod/modulus_block/intermediate_reg[64][31]_i_2_n_0
-    SLICE_X35Y120        CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114    11.170 r  expmod/modulus_block/intermediate_reg[64][35]_i_2/CO[3]
-                         net (fo=1, estimated)        0.000    11.170    expmod/modulus_block/intermediate_reg[64][35]_i_2_n_0
-    SLICE_X35Y121        CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114    11.284 r  expmod/modulus_block/intermediate_reg[64][39]_i_2/CO[3]
-                         net (fo=1, estimated)        0.000    11.284    expmod/modulus_block/intermediate_reg[64][39]_i_2_n_0
-    SLICE_X35Y122        CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114    11.398 r  expmod/modulus_block/intermediate_reg[64][43]_i_2/CO[3]
-                         net (fo=1, estimated)        0.000    11.398    expmod/modulus_block/intermediate_reg[64][43]_i_2_n_0
-    SLICE_X35Y123        CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114    11.512 r  expmod/modulus_block/intermediate_reg[64][47]_i_2/CO[3]
-                         net (fo=1, estimated)        0.000    11.512    expmod/modulus_block/intermediate_reg[64][47]_i_2_n_0
-    SLICE_X35Y124        CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114    11.626 r  expmod/modulus_block/intermediate_reg[64][51]_i_2/CO[3]
-                         net (fo=1, estimated)        0.009    11.635    expmod/modulus_block/intermediate_reg[64][51]_i_2_n_0
-    SLICE_X35Y125        CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114    11.749 r  expmod/modulus_block/intermediate_reg[64][55]_i_2/CO[3]
-                         net (fo=1, estimated)        0.000    11.749    expmod/modulus_block/intermediate_reg[64][55]_i_2_n_0
-    SLICE_X35Y126        CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114    11.863 r  expmod/modulus_block/intermediate_reg[64][59]_i_2/CO[3]
-                         net (fo=1, estimated)        0.000    11.863    expmod/modulus_block/intermediate_reg[64][59]_i_2_n_0
-    SLICE_X35Y127        CARRY4 (Prop_carry4_CI_O[1])
-                                                      0.334    12.197 r  expmod/modulus_block/intermediate_reg[64][63]_i_5/O[1]
-                         net (fo=1, estimated)        0.814    13.011    expmod/modulus_block/p_1_in[61]
-    SLICE_X35Y128        LUT3 (Prop_lut3_I0_O)        0.331    13.342 r  expmod/modulus_block/intermediate[64][61]_i_1/O
-                         net (fo=64, estimated)       1.127    14.469    expmod/modulus_block/intermediate1_in[61]
-    SLICE_X16Y135        FDRE                                         r  expmod/modulus_block/intermediate_reg[13][61]/D
+    SLICE_X43Y86         FDRE (Prop_fdre_C_Q)         0.456     5.511 r  keychain/expmod/modulus_block/index_reg[1]_rep__1/Q
+                         net (fo=112, estimated)      1.472     6.983    keychain/expmod/modulus_block/index_reg[1]_rep__1_n_0
+    SLICE_X37Y71         LUT6 (Prop_lut6_I2_O)        0.124     7.107 r  keychain/expmod/modulus_block/intermediate[64][1]_i_16/O
+                         net (fo=1, routed)           0.000     7.107    keychain/expmod/modulus_block/intermediate[64][1]_i_16_n_0
+    SLICE_X37Y71         MUXF7 (Prop_muxf7_I1_O)      0.217     7.324 r  keychain/expmod/modulus_block/intermediate_reg[64][1]_i_6/O
+                         net (fo=1, estimated)        0.749     8.073    keychain/expmod/modulus_block/intermediate_reg[64][1]_i_6_n_0
+    SLICE_X32Y72         LUT6 (Prop_lut6_I1_O)        0.299     8.372 r  keychain/expmod/modulus_block/intermediate[64][1]_i_3/O
+                         net (fo=1, estimated)        0.615     8.987    keychain/expmod/modulus_block/intermediate[64][1]_i_3_n_0
+    SLICE_X31Y77         LUT5 (Prop_lut5_I2_O)        0.124     9.111 r  keychain/expmod/modulus_block/intermediate[64][1]_i_2/O
+                         net (fo=5, estimated)        0.443     9.554    keychain/expmod/modulus_block/intermediate[64][1]_i_2_n_0
+    SLICE_X32Y78         LUT2 (Prop_lut2_I0_O)        0.124     9.678 r  keychain/expmod/modulus_block/intermediate[64][3]_i_6/O
+                         net (fo=1, routed)           0.000     9.678    keychain/expmod/modulus_block/intermediate[64][3]_i_6_n_0
+    SLICE_X32Y78         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.550    10.228 r  keychain/expmod/modulus_block/intermediate_reg[64][3]_i_2/CO[3]
+                         net (fo=1, estimated)        0.000    10.228    keychain/expmod/modulus_block/intermediate_reg[64][3]_i_2_n_0
+    SLICE_X32Y79         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    10.342 r  keychain/expmod/modulus_block/intermediate_reg[64][7]_i_2/CO[3]
+                         net (fo=1, estimated)        0.000    10.342    keychain/expmod/modulus_block/intermediate_reg[64][7]_i_2_n_0
+    SLICE_X32Y80         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    10.456 r  keychain/expmod/modulus_block/intermediate_reg[64][11]_i_2/CO[3]
+                         net (fo=1, estimated)        0.000    10.456    keychain/expmod/modulus_block/intermediate_reg[64][11]_i_2_n_0
+    SLICE_X32Y81         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    10.570 r  keychain/expmod/modulus_block/intermediate_reg[64][15]_i_2/CO[3]
+                         net (fo=1, estimated)        0.000    10.570    keychain/expmod/modulus_block/intermediate_reg[64][15]_i_2_n_0
+    SLICE_X32Y82         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    10.684 r  keychain/expmod/modulus_block/intermediate_reg[64][19]_i_2/CO[3]
+                         net (fo=1, estimated)        0.000    10.684    keychain/expmod/modulus_block/intermediate_reg[64][19]_i_2_n_0
+    SLICE_X32Y83         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    10.798 r  keychain/expmod/modulus_block/intermediate_reg[64][23]_i_2/CO[3]
+                         net (fo=1, estimated)        0.000    10.798    keychain/expmod/modulus_block/intermediate_reg[64][23]_i_2_n_0
+    SLICE_X32Y84         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    10.912 r  keychain/expmod/modulus_block/intermediate_reg[64][27]_i_2/CO[3]
+                         net (fo=1, estimated)        0.000    10.912    keychain/expmod/modulus_block/intermediate_reg[64][27]_i_2_n_0
+    SLICE_X32Y85         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.026 r  keychain/expmod/modulus_block/intermediate_reg[64][31]_i_2/CO[3]
+                         net (fo=1, estimated)        0.000    11.026    keychain/expmod/modulus_block/intermediate_reg[64][31]_i_2_n_0
+    SLICE_X32Y86         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.140 r  keychain/expmod/modulus_block/intermediate_reg[64][35]_i_2/CO[3]
+                         net (fo=1, estimated)        0.000    11.140    keychain/expmod/modulus_block/intermediate_reg[64][35]_i_2_n_0
+    SLICE_X32Y87         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.254 r  keychain/expmod/modulus_block/intermediate_reg[64][39]_i_2/CO[3]
+                         net (fo=1, estimated)        0.000    11.254    keychain/expmod/modulus_block/intermediate_reg[64][39]_i_2_n_0
+    SLICE_X32Y88         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.368 r  keychain/expmod/modulus_block/intermediate_reg[64][43]_i_2/CO[3]
+                         net (fo=1, estimated)        0.000    11.368    keychain/expmod/modulus_block/intermediate_reg[64][43]_i_2_n_0
+    SLICE_X32Y89         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.482 r  keychain/expmod/modulus_block/intermediate_reg[64][47]_i_2/CO[3]
+                         net (fo=1, estimated)        0.000    11.482    keychain/expmod/modulus_block/intermediate_reg[64][47]_i_2_n_0
+    SLICE_X32Y90         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.596 r  keychain/expmod/modulus_block/intermediate_reg[64][51]_i_2/CO[3]
+                         net (fo=1, estimated)        0.000    11.596    keychain/expmod/modulus_block/intermediate_reg[64][51]_i_2_n_0
+    SLICE_X32Y91         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.710 r  keychain/expmod/modulus_block/intermediate_reg[64][55]_i_2/CO[3]
+                         net (fo=1, estimated)        0.000    11.710    keychain/expmod/modulus_block/intermediate_reg[64][55]_i_2_n_0
+    SLICE_X32Y92         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114    11.824 r  keychain/expmod/modulus_block/intermediate_reg[64][59]_i_2/CO[3]
+                         net (fo=1, estimated)        0.000    11.824    keychain/expmod/modulus_block/intermediate_reg[64][59]_i_2_n_0
+    SLICE_X32Y93         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.334    12.158 r  keychain/expmod/modulus_block/intermediate_reg[64][63]_i_5/O[1]
+                         net (fo=1, estimated)        0.932    13.090    keychain/expmod/modulus_block/p_1_in[61]
+    SLICE_X14Y95         LUT3 (Prop_lut3_I0_O)        0.303    13.393 r  keychain/expmod/modulus_block/intermediate[64][61]_i_1/O
+                         net (fo=64, estimated)       0.989    14.382    keychain/expmod/modulus_block/intermediate1_in[61]
+    SLICE_X3Y95          FDRE                                         r  keychain/expmod/modulus_block/intermediate_reg[3][61]/D
   -------------------------------------------------------------------    -------------------
 
                          (clock gclk rise edge)      10.000    10.000 r  
@@ -114,16 +114,16 @@ Slack (MET) :             0.379ns  (required time - arrival time)
     N15                  IBUF (Prop_ibuf_I_O)         1.370    11.370 r  clk_100mhz_IBUF_inst/O
                          net (fo=1, estimated)        1.873    13.244    clk_100mhz_IBUF
     BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.091    13.335 r  clk_100mhz_IBUF_BUFG_inst/O
-                         net (fo=6144, estimated)     1.606    14.941    expmod/modulus_block/clk_100mhz_IBUF_BUFG
-    SLICE_X16Y135        FDRE                                         r  expmod/modulus_block/intermediate_reg[13][61]/C
-                         clock pessimism              0.191    15.131    
-                         clock uncertainty           -0.035    15.096    
-    SLICE_X16Y135        FDRE (Setup_fdre_C_D)       -0.248    14.848    expmod/modulus_block/intermediate_reg[13][61]
+                         net (fo=6040, estimated)     1.505    14.840    keychain/expmod/modulus_block/clk_100mhz_IBUF_BUFG
+    SLICE_X3Y95          FDRE                                         r  keychain/expmod/modulus_block/intermediate_reg[3][61]/C
+                         clock pessimism              0.182    15.021    
+                         clock uncertainty           -0.035    14.986    
+    SLICE_X3Y95          FDRE (Setup_fdre_C_D)       -0.081    14.905    keychain/expmod/modulus_block/intermediate_reg[3][61]
   -------------------------------------------------------------------
-                         required time                         14.848    
-                         arrival time                         -14.469    
+                         required time                         14.905    
+                         arrival time                         -14.382    
   -------------------------------------------------------------------
-                         slack                                  0.379    
+                         slack                                  0.523    
 
 
 

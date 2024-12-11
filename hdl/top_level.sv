@@ -44,8 +44,8 @@ module top_level (
 
     // Hook up Keychain
     keychain #(
-        .KEY_BYTES(16),
-        .MSG_BYTES(8),
+        .KEY_BYTES(4),
+        .MSG_BYTES(2),
         .BAUD_RATE(115_200)
     ) keychain (
         .clk_in(clk_100mhz),

@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
-| Date         : Tue Dec 10 00:59:51 2024
+| Date         : Tue Dec 10 21:56:27 2024
 | Host         : joseph-legion5 running 64-bit Linux Mint 22
 | Command      : report_utilization -file obj/post_synth_util.rpt -hierarchical -hierarchical_depth 4
 | Design       : top_level
@@ -19,17 +19,23 @@ Table of Contents
 1. Utilization by Hierarchy
 ---------------------------
 
-+-------------------+------------------+------------+------------+---------+------+------+--------+--------+------------+
-|      Instance     |      Module      | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | DSP Blocks |
-+-------------------+------------------+------------+------------+---------+------+------+--------+--------+------------+
-| top_level         |            (top) |       2787 |       2787 |       0 |    0 | 6122 |      0 |      0 |          0 |
-|   (top_level)     |            (top) |          0 |          0 |       0 |    0 |  132 |      0 |      0 |          0 |
-|   expmod          | exponent_modulus |       2597 |       2597 |       0 |    0 | 5759 |      0 |      0 |          0 |
-|     (expmod)      | exponent_modulus |        402 |        402 |       0 |    0 | 1212 |      0 |      0 |          0 |
-|     modulus_block |          modulus |       1740 |       1740 |       0 |    0 | 4306 |      0 |      0 |          0 |
-|     multiplier    |      simple_mult |        455 |        455 |       0 |    0 |  241 |      0 |      0 |          0 |
-|   receive         |     uart_receive |        140 |        140 |       0 |    0 |  181 |      0 |      0 |          0 |
-|   transmit        |    uart_transmit |         50 |         50 |       0 |    0 |   50 |      0 |      0 |          0 |
-+-------------------+------------------+------------+------------+---------+------+------+--------+--------+------------+
++---------------------+------------------+------------+------------+---------+------+------+--------+--------+------------+
+|       Instance      |      Module      | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | DSP Blocks |
++---------------------+------------------+------------+------------+---------+------+------+--------+--------+------------+
+| top_level           |            (top) |       2700 |       2700 |       0 |    0 | 6034 |      0 |      0 |          0 |
+|   (top_level)       |            (top) |          0 |          0 |       0 |    0 |    1 |      0 |      0 |          0 |
+|   keychain          |         keychain |       2700 |       2700 |       0 |    0 | 6033 |      0 |      0 |          0 |
+|     (keychain)      |         keychain |          7 |          7 |       0 |    0 |    2 |      0 |      0 |          0 |
+|     expmod          | exponent_modulus |       2540 |       2540 |       0 |    0 | 5759 |      0 |      0 |          0 |
+|       (expmod)      | exponent_modulus |        385 |        385 |       0 |    0 | 1212 |      0 |      0 |          0 |
+|       modulus_block |          modulus |       1706 |       1706 |       0 |    0 | 4306 |      0 |      0 |          0 |
+|       multiplier    |      simple_mult |        449 |        449 |       0 |    0 |  241 |      0 |      0 |          0 |
+|     receive         |     deserializer |        111 |        111 |       0 |    0 |  202 |      0 |      0 |          0 |
+|       (receive)     |     deserializer |         62 |         62 |       0 |    0 |  166 |      0 |      0 |          0 |
+|       receiver      |     uart_receive |         49 |         49 |       0 |    0 |   36 |      0 |      0 |          0 |
+|     transmit        |       serializer |         42 |         42 |       0 |    0 |   70 |      0 |      0 |          0 |
+|       (transmit)    |       serializer |         10 |         10 |       0 |    0 |   45 |      0 |      0 |          0 |
+|       transmitter   |    uart_transmit |         32 |         32 |       0 |    0 |   25 |      0 |      0 |          0 |
++---------------------+------------------+------------+------------+---------+------+------+--------+--------+------------+
 
 
