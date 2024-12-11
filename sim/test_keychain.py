@@ -11,10 +11,10 @@ from cocotb.runner import get_runner
 from random import randint
 
 # Key bytes
-KEY_BYTES = 16
+KEY_BYTES = 32
 
 # Message bytes
-MSG_BYTES = 8
+MSG_BYTES = 16
 
 # Total bytes
 BYTES = 2*KEY_BYTES + MSG_BYTES
