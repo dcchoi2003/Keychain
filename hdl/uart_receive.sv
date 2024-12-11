@@ -4,15 +4,14 @@
 module uart_receive
     #(
         parameter INPUT_CLOCK_FREQ = 100_000_000,
-        parameter BAUD_RATE = 9600,
-        parameter WIDTH = 16
+        parameter BAUD_RATE = 9600
     )
     (
         input wire clk_in,
         input wire rst_in,
         input wire rx_wire_in,
         output logic valid_out,
-        output logic [WIDTH-1:0] data_out
+        output logic [7:0] data_out
     );
 
     // Number of clock cycles per bit
@@ -24,14 +23,11 @@ module uart_receive
     // Width of the bit period
     localparam PERIOD_WIDTH = $clog2(BAUD_BIT_PERIOD);
 
-    // Width of the bit index
-    localparam INDEX_WIDTH = $clog2(WIDTH);
-
     // Data to be received
-    logic [WIDTH-1:0] receive_data;
+    logic [7:0] receive_data;
 
     // Index of the current bit
-    logic [INDEX_WIDTH-1:0] index;
+    logic [2:0] index;
 
     // How far along are we in this period?
     logic [PERIOD_WIDTH-1:0] count;
@@ -71,6 +67,7 @@ module uart_receive
                         if (!rx_wire_in) begin
                             // We are good to go!
                             state <= WAIT;
+                            count <= count + 1;
                         end else begin
                             // Invalid start bit
                             state <= IDLE;
@@ -95,12 +92,13 @@ module uart_receive
                 DATA: begin
                     if (count == HALF_BAUD) begin
                         receive_data[index] <= rx_wire_in;
+                        count <= count + 1;
                     end else if (count == BAUD_BIT_PERIOD - 1) begin
                         // Reset the count
                         count <= 0;
 
                         // Are we done yet?
-                        if (index == WIDTH - 1) begin
+                        if (index == 7) begin
                             state <= STOP;
                         end else begin
                             index <= index + 1;

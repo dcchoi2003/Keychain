@@ -10,23 +10,23 @@ from cocotb.utils import get_sim_time as gst
 from cocotb.runner import get_runner
 from random import randint
 
-# Bit width
-WIDTH = 256
+# Output bytes
+BYTES = 4
 
 # Number of tests
-N = 5
+N = 25
 
 # Max input size
-MAX_SIZE = pow(2, WIDTH) - 1
+MAX_SIZE = pow(2, 8*BYTES) - 1
 
 # Baud rate
-BAUD = 115_200
+BAUD = 921_600
 
 # Clock frequency
 FREQ = 100_000_000
 
-def convert_bits_le(number):
-    return ('{0:0' + str(WIDTH) + 'b}').format(number)[::-1]
+def convert_bits_le(number, width):
+    return ('{0:0' + str(width) + 'b}').format(number)[::-1]
 
 async def test_tx(dut, value):
     start_time = gst("ns")
@@ -34,7 +34,7 @@ async def test_tx(dut, value):
     print(f"Checking ({value}) ... ", end="")
 
     # Convert value to bits & reverse (LSB first)
-    bits = convert_bits_le(value)
+    bits = convert_bits_le(value, 8*BYTES)
 
     # Set input and trigger transmission
     dut.data_in.value = value
@@ -42,22 +42,31 @@ async def test_tx(dut, value):
     await RisingEdge(dut.clk_in)
     dut.ready_in.value = 0
 
-    await ClockCycles(dut.clk_in, FREQ//(2*BAUD))
+    # Byte index
+    i = 0
 
-    # Start bit
-    assert dut.tx_wire_out == 0
+    await ClockCycles(dut.clk_in, FREQ//(2*BAUD))
 
     # Check each bit
-    for bit in bits:
+    while i < BYTES:
+        byte = bits[8*i:8*i+8]
+
+        # Start bit
+        assert dut.tx_wire_out == 0
+
+        for bit in byte:
+            await ClockCycles(dut.clk_in, FREQ//BAUD)
+            assert dut.tx_wire_out.value == int(bit)
+            await RisingEdge(dut.clk_in)
+
+        # Stop bit
         await ClockCycles(dut.clk_in, FREQ//BAUD)
-        assert dut.tx_wire_out.value == int(bit)
-        await RisingEdge(dut.clk_in)
+        assert dut.tx_wire_out == 1
+        await ClockCycles(dut.clk_in, FREQ//BAUD)
 
-    # Stop bit
-    await ClockCycles(dut.clk_in, FREQ//BAUD)
-    assert dut.tx_wire_out == 1
-    await ClockCycles(dut.clk_in, FREQ//(2*BAUD))
-
+        # Increment byte index
+        i += 1
+    
     cycles = int((gst("ns") - start_time) / 10)
 
     print(f"OK in {cycles} cycles")
@@ -90,6 +99,8 @@ async def test_uart_transmit(dut):
         # See if it calculates it correctly
         total_cycles += await test_tx(dut, value)
 
+        await ClockCycles(dut.clk_in, 1000)
+
     # Average cycles
     average_cycles = round(total_cycles/N, 3)
 
@@ -104,13 +115,14 @@ def is_runner():
     proj_path = Path(__file__).resolve().parent.parent
     sys.path.append(str(proj_path / "sim" / "model"))
     sources = [proj_path / "hdl" / "uart_transmit.sv"]
+    sources += [proj_path / "hdl" / "serializer.sv"]
     build_test_args = ["-Wall"]
-    parameters = {"WIDTH": WIDTH, "BAUD_RATE": BAUD, "INPUT_CLOCK_FREQ": FREQ}
+    parameters = {"BYTES": BYTES, "BAUD_RATE": BAUD, "INPUT_CLOCK_FREQ": FREQ}
     sys.path.append(str(proj_path / "sim"))
     runner = get_runner(sim)
     runner.build(
         sources=sources,
-        hdl_toplevel="uart_transmit",
+        hdl_toplevel="serializer",
         always=True,
         build_args=build_test_args,
         parameters=parameters,
@@ -119,7 +131,7 @@ def is_runner():
     )
     run_test_args = []
     runner.test(
-        hdl_toplevel="uart_transmit",
+        hdl_toplevel="serializer",
         test_module="test_uart_transmit",
         test_args=run_test_args,
         waves=True

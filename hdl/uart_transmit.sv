@@ -4,14 +4,13 @@
 module uart_transmit
     #(
         parameter INPUT_CLOCK_FREQ = 100_000_000,
-        parameter BAUD_RATE = 9600,
-        parameter WIDTH = 16
+        parameter BAUD_RATE = 9600
     )
     (
         input wire clk_in,
         input wire rst_in,
         input wire ready_in,
-        input wire [WIDTH-1:0] data_in,
+        input wire [7:0] data_in,
         output logic busy_out,
         output logic tx_wire_out
     );
@@ -22,14 +21,11 @@ module uart_transmit
     // Width of the bit period
     localparam PERIOD_WIDTH = $clog2(BAUD_BIT_PERIOD);
 
-    // Width of the bit index
-    localparam INDEX_WIDTH = $clog2(WIDTH);
-
     // Data to be transmitted
-    logic [WIDTH-1:0] transmit_data;
+    logic [7:0] transmit_data;
 
     // Index of the current bit
-    logic [INDEX_WIDTH-1:0] index;
+    logic [2:0] index;
 
     // How far along are we in this period?
     logic [PERIOD_WIDTH-1:0] count;
@@ -42,7 +38,7 @@ module uart_transmit
         if (rst_in) begin
             // Reset
             state <= IDLE;
-            transmit_data <= 0;
+            transmit_data <= 8'b0;
             count <= 0;
             index <= 0;
             tx_wire_out <= 1'b1;
@@ -51,13 +47,6 @@ module uart_transmit
             case (state)
                 // Idle, wait for new data
                 IDLE: begin
-                    // Reset the block
-                    transmit_data <= 0;
-                    count <= 0;
-                    index <= 0;
-                    tx_wire_out <= 1'b1;
-                    busy_out <= 1'b0;
-
                     // If we're receiving data, go to the START state
                     if (ready_in) begin
                         // We're busy!
@@ -89,7 +78,7 @@ module uart_transmit
                         count <= 0;
 
                         // Are we done yet?
-                        if (index == WIDTH - 1) begin
+                        if (index == 7) begin
                             state <= STOP;
                         end else begin
                             index <= index + 1;
@@ -105,6 +94,13 @@ module uart_transmit
                     if (count == BAUD_BIT_PERIOD - 1) begin
                         // All done!
                         state <= IDLE;
+
+                        // Reset the block
+                        transmit_data <= 8'b0;
+                        count <= 0;
+                        index <= 0;
+                        tx_wire_out <= 1'b1;
+                        busy_out <= 1'b0;
                     end else begin
                         count <= count + 1;
                         tx_wire_out <= 1'b1;

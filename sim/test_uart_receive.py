@@ -10,53 +10,75 @@ from cocotb.utils import get_sim_time as gst
 from cocotb.runner import get_runner
 from random import randint
 
-# Bit width
-WIDTH = 256
+# Key width
+KEY_BYTES = 4
+
+# Message width
+MSG_BYTES = 2
+
+# Total bytes
+BYTES = 2 * KEY_BYTES + MSG_BYTES
 
 # Number of tests
 N = 5
 
 # Max input size
-MAX_SIZE = pow(2, WIDTH) - 1
+MAX_KEY_SIZE = pow(2, 8*KEY_BYTES) - 1
+MAX_MSG_SIZE = pow(2, 8*MSG_BYTES) - 1
 
 # Baud rate
-BAUD = 115_200
+BAUD = 921_600
 
 # Clock frequency
 FREQ = 100_000_000
 
-def convert_bits_le(number):
-    return ('{0:0' + str(WIDTH) + 'b}').format(number)[::-1]
+def convert_bits_le(number, width):
+    return ('{0:0' + str(width) + 'b}').format(number)[::-1]
 
-async def test_rx(dut, value):
+async def test_rx(dut, value, exponent, modulus):
     start_time = gst("ns")
 
-    print(f"Checking ({value}) ... ", end="")
+    print(f"Checking ({value}, {exponent}, {modulus}) ... ", end="")
 
     # Convert value to bits & reverse (LSB first)
-    bits = convert_bits_le(value)
+    value_bits = convert_bits_le(value, 8*MSG_BYTES)
+    key_bits   = convert_bits_le(exponent, 8*KEY_BYTES)
+    mod_bits   = convert_bits_le(modulus, 8*KEY_BYTES)
+    bits = mod_bits + key_bits + value_bits
 
-    # Start bit
-    dut.rx_wire_in.value = 0
-    await ClockCycles(dut.clk_in, FREQ//BAUD)
-    await RisingEdge(dut.clk_in)
+    # Initialize index
+    i = 0
 
-    # Send each bit
-    for bit in bits:
-        dut.rx_wire_in.value = int(bit)
+    while i < BYTES:
+        byte = bits[8*i:8*i+8]
+
+        # Start bit
+        dut.rx_wire_in.value = 0
         await ClockCycles(dut.clk_in, FREQ//BAUD)
         await RisingEdge(dut.clk_in)
 
-    # Stop bit
-    dut.rx_wire_in.value = 1
+        # Send each bit
+        for bit in byte:
+            dut.rx_wire_in.value = int(bit)
+            await ClockCycles(dut.clk_in, FREQ//BAUD)
+            await RisingEdge(dut.clk_in)
+
+        # Stop bit
+        dut.rx_wire_in.value = 1
+        await ClockCycles(dut.clk_in, FREQ//BAUD)
+
+        i += 1
 
     # Wait for valid data
-    await RisingEdge(dut.valid_out)
+    await ClockCycles(dut.clk_in, 1000)
 
     # Wait another clock cycle
     await ClockCycles(dut.clk_in, 1)
 
-    assert dut.data_out == value
+    # Correct result
+    correct_result = (value << 8*(2 * KEY_BYTES)) + (exponent << 8*KEY_BYTES) + modulus
+
+    assert dut.data_out == correct_result
 
     cycles = int((gst("ns") - start_time) / 10)
 
@@ -75,7 +97,7 @@ async def test_uart_receive(dut):
 
     # Assert RESET
     dut.rst_in.value = 1
-    await ClockCycles(dut.clk_in,3)
+    await ClockCycles(dut.clk_in, 3)
     dut.rst_in.value = 0
 
     # Keep tally of cycles
@@ -84,10 +106,12 @@ async def test_uart_receive(dut):
     # Send random data
     for _ in range(N):
         # Generate random numbers
-        value = randint(1, MAX_SIZE)
+        modulus = randint(1, MAX_KEY_SIZE)
+        value = randint(1, min(MAX_MSG_SIZE, modulus))
+        exponent = randint(1, MAX_KEY_SIZE)
 
         # See if it calculates it correctly
-        total_cycles += await test_rx(dut, value)
+        total_cycles += await test_rx(dut, value, exponent, modulus)
 
     # Average cycles
     average_cycles = round(total_cycles/N, 3)
@@ -103,13 +127,14 @@ def is_runner():
     proj_path = Path(__file__).resolve().parent.parent
     sys.path.append(str(proj_path / "sim" / "model"))
     sources = [proj_path / "hdl" / "uart_receive.sv"]
+    sources += [proj_path / "hdl" / "deserializer.sv"]
     build_test_args = ["-Wall"]
-    parameters = {"WIDTH": WIDTH, "BAUD_RATE": BAUD, "INPUT_CLOCK_FREQ": FREQ}
+    parameters = {"KEY_BYTES": KEY_BYTES, "MSG_BYTES": MSG_BYTES, "BAUD_RATE": BAUD, "INPUT_CLOCK_FREQ": FREQ}
     sys.path.append(str(proj_path / "sim"))
     runner = get_runner(sim)
     runner.build(
         sources=sources,
-        hdl_toplevel="uart_receive",
+        hdl_toplevel="deserializer",
         always=True,
         build_args=build_test_args,
         parameters=parameters,
@@ -118,7 +143,7 @@ def is_runner():
     )
     run_test_args = []
     runner.test(
-        hdl_toplevel="uart_receive",
+        hdl_toplevel="deserializer",
         test_module="test_uart_receive",
         test_args=run_test_args,
         waves=True
