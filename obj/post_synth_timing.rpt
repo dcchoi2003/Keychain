@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
-| Date         : Tue Dec 10 22:08:45 2024
-| Host         : joseph-legion5 running 64-bit Linux Mint 22
+| Date         : Wed Dec 11 19:21:45 2024
+| Host         : eecs-digital-45 running 64-bit Ubuntu 24.04.1 LTS
 | Command      : report_timing -file obj/post_synth_timing.rpt
 | Design       : top_level
 | Device       : 7s50-csga324
@@ -12,92 +12,123 @@ Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanc
 
 Timing Report
 
-Slack (MET) :             3.733ns  (required time - arrival time)
+Slack (MET) :             91.974ns  (required time - arrival time)
   Source:                 keychain/expmod/modulus_block/intermediate_reg[23][1]/C
-                            (rising edge-triggered cell FDRE clocked by gclk  {rise@0.000ns fall@4.000ns period=10.000ns})
-  Destination:            keychain/expmod/modulus_block/intermediate_reg[10][31]/D
-                            (rising edge-triggered cell FDRE clocked by gclk  {rise@0.000ns fall@4.000ns period=10.000ns})
-  Path Group:             gclk
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            keychain/expmod/modulus_block/intermediate_reg[10][63]/D
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             clk_out1_clk_wiz_0
   Path Type:              Setup (Max at Slow Process Corner)
-  Requirement:            10.000ns  (gclk rise@10.000ns - gclk rise@0.000ns)
-  Data Path Delay:        6.116ns  (logic 3.246ns (53.074%)  route 2.870ns (46.926%))
-  Logic Levels:           13  (CARRY4=8 LUT3=1 LUT5=1 LUT6=1 MUXF7=1 MUXF8=1)
+  Requirement:            100.000ns  (clk_out1_clk_wiz_0 rise@100.000ns - clk_out1_clk_wiz_0 rise@0.000ns)
+  Data Path Delay:        7.770ns  (logic 4.157ns (53.501%)  route 3.613ns (46.499%))
+  Logic Levels:           21  (CARRY4=16 LUT3=1 LUT5=1 LUT6=2 MUXF7=1)
   Clock Path Skew:        -0.145ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    2.660ns = ( 12.660 - 10.000 ) 
-    Source Clock Delay      (SCD):    2.920ns
-    Clock Pessimism Removal (CPR):    0.115ns
-  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Destination Clock Delay (DCD):    -2.279ns = ( 97.721 - 100.000 ) 
+    Source Clock Delay      (SCD):    -1.604ns
+    Clock Pessimism Removal (CPR):    0.530ns
+  Clock Uncertainty:      0.140ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
     Total System Jitter     (TSJ):    0.071ns
-    Total Input Jitter      (TIJ):    0.000ns
-    Discrete Jitter          (DJ):    0.000ns
+    Discrete Jitter          (DJ):    0.270ns
     Phase Error              (PE):    0.000ns
 
     Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
   -------------------------------------------------------------------    -------------------
-                         (clock gclk rise edge)       0.000     0.000 r  
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                      0.000     0.000 r  
     N15                                               0.000     0.000 r  clk_100mhz (IN)
-                         net (fo=0)                   0.000     0.000    clk_100mhz
-    N15                  IBUF (Prop_ibuf_I_O)         1.440     1.440 r  clk_100mhz_IBUF_inst/O
-                         net (fo=1, unplaced)         0.800     2.240    clk_100mhz_IBUF
-                         BUFG (Prop_bufg_I_O)         0.096     2.336 r  clk_100mhz_IBUF_BUFG_inst/O
-                         net (fo=1790, unplaced)      0.584     2.920    keychain/expmod/modulus_block/clk_100mhz_IBUF_BUFG
+                         net (fo=0)                   0.000     0.000    clock_wizard/inst/clk_100mhz
+    N15                  IBUF (Prop_ibuf_I_O)         1.440     1.440 r  clock_wizard/inst/clkin1_ibufg/O
+                         net (fo=1, unplaced)         0.584     2.024    clock_wizard/inst/clk_in1_clk_wiz_0
+                         MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -5.108    -3.083 r  clock_wizard/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, unplaced)         0.800    -2.284    clock_wizard/inst/clk_out1_clk_wiz_0
+                         BUFG (Prop_bufg_I_O)         0.096    -2.188 r  clock_wizard/inst/clkout1_buf/O
+                         net (fo=6029, unplaced)      0.584    -1.604    keychain/expmod/modulus_block/clk_out1
                          FDRE                                         r  keychain/expmod/modulus_block/intermediate_reg[23][1]/C
   -------------------------------------------------------------------    -------------------
-                         FDRE (Prop_fdre_C_Q)         0.456     3.376 r  keychain/expmod/modulus_block/intermediate_reg[23][1]/Q
-                         net (fo=1, unplaced)         0.965     4.341    keychain/expmod/modulus_block/intermediate_reg_n_0_[23][1]
-                         LUT6 (Prop_lut6_I0_O)        0.295     4.636 r  keychain/expmod/modulus_block/p_1_out_carry_i_50/O
-                         net (fo=1, unplaced)         0.000     4.636    keychain/expmod/modulus_block/p_1_out_carry_i_50_n_0
-                         MUXF7 (Prop_muxf7_I1_O)      0.245     4.881 r  keychain/expmod/modulus_block/p_1_out_carry_i_25/O
-                         net (fo=1, unplaced)         0.000     4.881    keychain/expmod/modulus_block/p_1_out_carry_i_25_n_0
-                         MUXF8 (Prop_muxf8_I0_O)      0.104     4.985 r  keychain/expmod/modulus_block/p_1_out_carry_i_13/O
-                         net (fo=1, unplaced)         0.611     5.596    keychain/expmod/modulus_block/p_1_out_carry_i_13_n_0
-                         LUT5 (Prop_lut5_I2_O)        0.319     5.915 r  keychain/expmod/modulus_block/p_1_out_carry_i_3/O
-                         net (fo=5, unplaced)         0.667     6.582    keychain/expmod/modulus_block/intermediate[1]
+                         FDRE (Prop_fdre_C_Q)         0.456    -1.148 r  keychain/expmod/modulus_block/intermediate_reg[23][1]/Q
+                         net (fo=1, unplaced)         0.965    -0.183    keychain/expmod/modulus_block/intermediate_reg_n_0_[23][1]
+                         LUT6 (Prop_lut6_I0_O)        0.295     0.112 r  keychain/expmod/modulus_block/intermediate[64][1]_i_24/O
+                         net (fo=1, unplaced)         0.000     0.112    keychain/expmod/modulus_block/intermediate[64][1]_i_24_n_0
+                         MUXF7 (Prop_muxf7_I1_O)      0.245     0.357 r  keychain/expmod/modulus_block/intermediate_reg[64][1]_i_10/O
+                         net (fo=1, unplaced)         0.905     1.262    keychain/expmod/modulus_block/intermediate_reg[64][1]_i_10_n_0
+                         LUT6 (Prop_lut6_I1_O)        0.298     1.560 r  keychain/expmod/modulus_block/intermediate[64][1]_i_4/O
+                         net (fo=1, unplaced)         0.449     2.009    keychain/expmod/modulus_block/intermediate[64][1]_i_4_n_0
+                         LUT5 (Prop_lut5_I4_O)        0.124     2.133 r  keychain/expmod/modulus_block/intermediate[64][1]_i_2/O
+                         net (fo=5, unplaced)         0.667     2.800    keychain/expmod/modulus_block/intermediate[64][1]_i_2_n_0
                          CARRY4 (Prop_carry4_DI[1]_CO[3])
-                                                      0.507     7.089 r  keychain/expmod/modulus_block/p_1_out_carry/CO[3]
-                         net (fo=1, unplaced)         0.009     7.098    keychain/expmod/modulus_block/p_1_out_carry_n_0
+                                                      0.507     3.307 r  keychain/expmod/modulus_block/intermediate_reg[64][3]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.009     3.316    keychain/expmod/modulus_block/intermediate_reg[64][3]_i_2_n_0
                          CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     7.212 r  keychain/expmod/modulus_block/p_1_out_carry__0/CO[3]
-                         net (fo=1, unplaced)         0.000     7.212    keychain/expmod/modulus_block/p_1_out_carry__0_n_0
+                                                      0.114     3.430 r  keychain/expmod/modulus_block/intermediate_reg[64][7]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     3.430    keychain/expmod/modulus_block/intermediate_reg[64][7]_i_2_n_0
                          CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     7.326 r  keychain/expmod/modulus_block/p_1_out_carry__1/CO[3]
-                         net (fo=1, unplaced)         0.000     7.326    keychain/expmod/modulus_block/p_1_out_carry__1_n_0
+                                                      0.114     3.544 r  keychain/expmod/modulus_block/intermediate_reg[64][11]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     3.544    keychain/expmod/modulus_block/intermediate_reg[64][11]_i_2_n_0
                          CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     7.440 r  keychain/expmod/modulus_block/p_1_out_carry__2/CO[3]
-                         net (fo=1, unplaced)         0.000     7.440    keychain/expmod/modulus_block/p_1_out_carry__2_n_0
+                                                      0.114     3.658 r  keychain/expmod/modulus_block/intermediate_reg[64][15]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     3.658    keychain/expmod/modulus_block/intermediate_reg[64][15]_i_2_n_0
                          CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     7.554 r  keychain/expmod/modulus_block/p_1_out_carry__3/CO[3]
-                         net (fo=1, unplaced)         0.000     7.554    keychain/expmod/modulus_block/p_1_out_carry__3_n_0
+                                                      0.114     3.772 r  keychain/expmod/modulus_block/intermediate_reg[64][19]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     3.772    keychain/expmod/modulus_block/intermediate_reg[64][19]_i_2_n_0
                          CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     7.668 r  keychain/expmod/modulus_block/p_1_out_carry__4/CO[3]
-                         net (fo=1, unplaced)         0.000     7.668    keychain/expmod/modulus_block/p_1_out_carry__4_n_0
+                                                      0.114     3.886 r  keychain/expmod/modulus_block/intermediate_reg[64][23]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     3.886    keychain/expmod/modulus_block/intermediate_reg[64][23]_i_2_n_0
                          CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     7.782 r  keychain/expmod/modulus_block/p_1_out_carry__5/CO[3]
-                         net (fo=1, unplaced)         0.000     7.782    keychain/expmod/modulus_block/p_1_out_carry__5_n_0
+                                                      0.114     4.000 r  keychain/expmod/modulus_block/intermediate_reg[64][27]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     4.000    keychain/expmod/modulus_block/intermediate_reg[64][27]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     4.114 r  keychain/expmod/modulus_block/intermediate_reg[64][31]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     4.114    keychain/expmod/modulus_block/intermediate_reg[64][31]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     4.228 r  keychain/expmod/modulus_block/intermediate_reg[64][35]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     4.228    keychain/expmod/modulus_block/intermediate_reg[64][35]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     4.342 r  keychain/expmod/modulus_block/intermediate_reg[64][39]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     4.342    keychain/expmod/modulus_block/intermediate_reg[64][39]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     4.456 r  keychain/expmod/modulus_block/intermediate_reg[64][43]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     4.456    keychain/expmod/modulus_block/intermediate_reg[64][43]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     4.570 r  keychain/expmod/modulus_block/intermediate_reg[64][47]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     4.570    keychain/expmod/modulus_block/intermediate_reg[64][47]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     4.684 r  keychain/expmod/modulus_block/intermediate_reg[64][51]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     4.684    keychain/expmod/modulus_block/intermediate_reg[64][51]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     4.798 r  keychain/expmod/modulus_block/intermediate_reg[64][55]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     4.798    keychain/expmod/modulus_block/intermediate_reg[64][55]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     4.912 r  keychain/expmod/modulus_block/intermediate_reg[64][59]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     4.912    keychain/expmod/modulus_block/intermediate_reg[64][59]_i_2_n_0
                          CARRY4 (Prop_carry4_CI_O[3])
-                                                      0.329     8.111 r  keychain/expmod/modulus_block/p_1_out_carry__6/O[3]
-                         net (fo=1, unplaced)         0.618     8.729    keychain/expmod/modulus_block/p_1_in[31]
-                         LUT3 (Prop_lut3_I0_O)        0.307     9.036 r  keychain/expmod/modulus_block/intermediate[32][31]_i_2/O
-                         net (fo=32, unplaced)        0.000     9.036    keychain/expmod/modulus_block/intermediate1_in[31]
-                         FDRE                                         r  keychain/expmod/modulus_block/intermediate_reg[10][31]/D
+                                                      0.329     5.241 r  keychain/expmod/modulus_block/intermediate_reg[64][63]_i_5/O[3]
+                         net (fo=1, unplaced)         0.618     5.859    keychain/expmod/modulus_block/p_1_in[63]
+                         LUT3 (Prop_lut3_I0_O)        0.307     6.166 r  keychain/expmod/modulus_block/intermediate[64][63]_i_2/O
+                         net (fo=64, unplaced)        0.000     6.166    keychain/expmod/modulus_block/intermediate1_in[63]
+                         FDRE                                         r  keychain/expmod/modulus_block/intermediate_reg[10][63]/D
   -------------------------------------------------------------------    -------------------
 
-                         (clock gclk rise edge)      10.000    10.000 r  
-    N15                                               0.000    10.000 r  clk_100mhz (IN)
-                         net (fo=0)                   0.000    10.000    clk_100mhz
-    N15                  IBUF (Prop_ibuf_I_O)         1.370    11.370 r  clk_100mhz_IBUF_inst/O
-                         net (fo=1, unplaced)         0.760    12.130    clk_100mhz_IBUF
-                         BUFG (Prop_bufg_I_O)         0.091    12.221 r  clk_100mhz_IBUF_BUFG_inst/O
-                         net (fo=1790, unplaced)      0.439    12.660    keychain/expmod/modulus_block/clk_100mhz_IBUF_BUFG
-                         FDRE                                         r  keychain/expmod/modulus_block/intermediate_reg[10][31]/C
-                         clock pessimism              0.115    12.775    
-                         clock uncertainty           -0.035    12.740    
-                         FDRE (Setup_fdre_C_D)        0.029    12.769    keychain/expmod/modulus_block/intermediate_reg[10][31]
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                    100.000   100.000 r  
+    N15                                               0.000   100.000 r  clk_100mhz (IN)
+                         net (fo=0)                   0.000   100.000    clock_wizard/inst/clk_100mhz
+    N15                  IBUF (Prop_ibuf_I_O)         1.370   101.370 r  clock_wizard/inst/clkin1_ibufg/O
+                         net (fo=1, unplaced)         0.439   101.809    clock_wizard/inst/clk_in1_clk_wiz_0
+                         MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -5.378    96.431 r  clock_wizard/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, unplaced)         0.760    97.191    clock_wizard/inst/clk_out1_clk_wiz_0
+                         BUFG (Prop_bufg_I_O)         0.091    97.282 r  clock_wizard/inst/clkout1_buf/O
+                         net (fo=6029, unplaced)      0.439    97.721    keychain/expmod/modulus_block/clk_out1
+                         FDRE                                         r  keychain/expmod/modulus_block/intermediate_reg[10][63]/C
+                         clock pessimism              0.530    98.251    
+                         clock uncertainty           -0.140    98.112    
+                         FDRE (Setup_fdre_C_D)        0.029    98.141    keychain/expmod/modulus_block/intermediate_reg[10][63]
   -------------------------------------------------------------------
-                         required time                         12.769    
-                         arrival time                          -9.036    
+                         required time                         98.141    
+                         arrival time                          -6.166    
   -------------------------------------------------------------------
-                         slack                                  3.733    
+                         slack                                 91.974    
 
 
 

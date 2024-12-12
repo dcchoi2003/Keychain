@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
-| Date         : Tue Dec 10 22:08:45 2024
-| Host         : joseph-legion5 running 64-bit Linux Mint 22
+| Date         : Wed Dec 11 19:21:45 2024
+| Host         : eecs-digital-45 running 64-bit Ubuntu 24.04.1 LTS
 | Command      : report_timing_summary -file obj/post_synth_timing_summary.rpt
 | Design       : top_level
 | Device       : 7s50-csga324
@@ -54,7 +54,7 @@ Table of Contents
 3. checking pulse_width_clock (0)
 4. checking unconstrained_internal_endpoints (0)
 5. checking no_input_delay (2)
-6. checking no_output_delay (2)
+6. checking no_output_delay (17)
 7. checking multiple_clock (0)
 8. checking generated_clocks (0)
 9. checking loops (0)
@@ -91,9 +91,9 @@ Table of Contents
  There are 0 input ports with no input delay but user has a false path constraint.
 
 
-6. checking no_output_delay (2)
--------------------------------
- There are 2 ports with no output delay specified. (HIGH)
+6. checking no_output_delay (17)
+--------------------------------
+ There are 17 ports with no output delay specified. (HIGH)
 
  There are 0 ports with no output delay but user has a false path constraint
 
@@ -138,7 +138,7 @@ Table of Contents
 
     WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
     -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
-      3.733        0.000                      0                 4677        0.129        0.000                      0                 4677        3.500        0.000                       0                  1791  
+     91.974        0.000                      0                16327        0.129        0.000                      0                16327        2.000        0.000                       0                  6035  
 
 
 All user specified timing constraints are met.
@@ -149,9 +149,11 @@ All user specified timing constraints are met.
 | -------------
 ------------------------------------------------------------------------------------------------
 
-Clock  Waveform(ns)       Period(ns)      Frequency(MHz)
------  ------------       ----------      --------------
-gclk   {0.000 4.000}      10.000          100.000         
+Clock                 Waveform(ns)         Period(ns)      Frequency(MHz)
+-----                 ------------         ----------      --------------
+gclk                  {0.000 4.000}        10.000          100.000         
+  clk_out1_clk_wiz_0  {0.000 50.000}       100.000         10.000          
+  clkfbout_clk_wiz_0  {0.000 10.000}       20.000          50.000          
 
 
 ------------------------------------------------------------------------------------------------
@@ -159,9 +161,11 @@ gclk   {0.000 4.000}      10.000          100.000
 | -----------------
 ------------------------------------------------------------------------------------------------
 
-Clock             WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
------             -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
-gclk                3.733        0.000                      0                 4677        0.129        0.000                      0                 4677        3.500        0.000                       0                  1791  
+Clock                     WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
+-----                     -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
+gclk                                                                                                                                                                    2.000        0.000                       0                     1  
+  clk_out1_clk_wiz_0       91.974        0.000                      0                16327        0.129        0.000                      0                16327       49.500        0.000                       0                  6031  
+  clkfbout_clk_wiz_0                                                                                                                                                   17.845        0.000                       0                     3  
 
 
 ------------------------------------------------------------------------------------------------
@@ -192,161 +196,10 @@ Path Group    From Clock    To Clock          WNS(ns)      TNS(ns)  TNS Failing 
 From Clock:  gclk
   To Clock:  gclk
 
-Setup :            0  Failing Endpoints,  Worst Slack        3.733ns,  Total Violation        0.000ns
-Hold  :            0  Failing Endpoints,  Worst Slack        0.129ns,  Total Violation        0.000ns
-PW    :            0  Failing Endpoints,  Worst Slack        3.500ns,  Total Violation        0.000ns
+Setup :           NA  Failing Endpoints,  Worst Slack           NA  ,  Total Violation           NA
+Hold  :           NA  Failing Endpoints,  Worst Slack           NA  ,  Total Violation           NA
+PW    :            0  Failing Endpoints,  Worst Slack        2.000ns,  Total Violation        0.000ns
 ---------------------------------------------------------------------------------------------------
-
-
-Max Delay Paths
---------------------------------------------------------------------------------------
-Slack (MET) :             3.733ns  (required time - arrival time)
-  Source:                 keychain/expmod/modulus_block/intermediate_reg[23][1]/C
-                            (rising edge-triggered cell FDRE clocked by gclk  {rise@0.000ns fall@4.000ns period=10.000ns})
-  Destination:            keychain/expmod/modulus_block/intermediate_reg[10][31]/D
-                            (rising edge-triggered cell FDRE clocked by gclk  {rise@0.000ns fall@4.000ns period=10.000ns})
-  Path Group:             gclk
-  Path Type:              Setup (Max at Slow Process Corner)
-  Requirement:            10.000ns  (gclk rise@10.000ns - gclk rise@0.000ns)
-  Data Path Delay:        6.116ns  (logic 3.246ns (53.074%)  route 2.870ns (46.926%))
-  Logic Levels:           13  (CARRY4=8 LUT3=1 LUT5=1 LUT6=1 MUXF7=1 MUXF8=1)
-  Clock Path Skew:        -0.145ns (DCD - SCD + CPR)
-    Destination Clock Delay (DCD):    2.660ns = ( 12.660 - 10.000 ) 
-    Source Clock Delay      (SCD):    2.920ns
-    Clock Pessimism Removal (CPR):    0.115ns
-  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
-    Total System Jitter     (TSJ):    0.071ns
-    Total Input Jitter      (TIJ):    0.000ns
-    Discrete Jitter          (DJ):    0.000ns
-    Phase Error              (PE):    0.000ns
-
-    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
-  -------------------------------------------------------------------    -------------------
-                         (clock gclk rise edge)       0.000     0.000 r  
-    N15                                               0.000     0.000 r  clk_100mhz (IN)
-                         net (fo=0)                   0.000     0.000    clk_100mhz
-    N15                  IBUF (Prop_ibuf_I_O)         1.440     1.440 r  clk_100mhz_IBUF_inst/O
-                         net (fo=1, unplaced)         0.800     2.240    clk_100mhz_IBUF
-                         BUFG (Prop_bufg_I_O)         0.096     2.336 r  clk_100mhz_IBUF_BUFG_inst/O
-                         net (fo=1790, unplaced)      0.584     2.920    keychain/expmod/modulus_block/clk_100mhz_IBUF_BUFG
-                         FDRE                                         r  keychain/expmod/modulus_block/intermediate_reg[23][1]/C
-  -------------------------------------------------------------------    -------------------
-                         FDRE (Prop_fdre_C_Q)         0.456     3.376 r  keychain/expmod/modulus_block/intermediate_reg[23][1]/Q
-                         net (fo=1, unplaced)         0.965     4.341    keychain/expmod/modulus_block/intermediate_reg_n_0_[23][1]
-                         LUT6 (Prop_lut6_I0_O)        0.295     4.636 r  keychain/expmod/modulus_block/p_1_out_carry_i_50/O
-                         net (fo=1, unplaced)         0.000     4.636    keychain/expmod/modulus_block/p_1_out_carry_i_50_n_0
-                         MUXF7 (Prop_muxf7_I1_O)      0.245     4.881 r  keychain/expmod/modulus_block/p_1_out_carry_i_25/O
-                         net (fo=1, unplaced)         0.000     4.881    keychain/expmod/modulus_block/p_1_out_carry_i_25_n_0
-                         MUXF8 (Prop_muxf8_I0_O)      0.104     4.985 r  keychain/expmod/modulus_block/p_1_out_carry_i_13/O
-                         net (fo=1, unplaced)         0.611     5.596    keychain/expmod/modulus_block/p_1_out_carry_i_13_n_0
-                         LUT5 (Prop_lut5_I2_O)        0.319     5.915 r  keychain/expmod/modulus_block/p_1_out_carry_i_3/O
-                         net (fo=5, unplaced)         0.667     6.582    keychain/expmod/modulus_block/intermediate[1]
-                         CARRY4 (Prop_carry4_DI[1]_CO[3])
-                                                      0.507     7.089 r  keychain/expmod/modulus_block/p_1_out_carry/CO[3]
-                         net (fo=1, unplaced)         0.009     7.098    keychain/expmod/modulus_block/p_1_out_carry_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     7.212 r  keychain/expmod/modulus_block/p_1_out_carry__0/CO[3]
-                         net (fo=1, unplaced)         0.000     7.212    keychain/expmod/modulus_block/p_1_out_carry__0_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     7.326 r  keychain/expmod/modulus_block/p_1_out_carry__1/CO[3]
-                         net (fo=1, unplaced)         0.000     7.326    keychain/expmod/modulus_block/p_1_out_carry__1_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     7.440 r  keychain/expmod/modulus_block/p_1_out_carry__2/CO[3]
-                         net (fo=1, unplaced)         0.000     7.440    keychain/expmod/modulus_block/p_1_out_carry__2_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     7.554 r  keychain/expmod/modulus_block/p_1_out_carry__3/CO[3]
-                         net (fo=1, unplaced)         0.000     7.554    keychain/expmod/modulus_block/p_1_out_carry__3_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     7.668 r  keychain/expmod/modulus_block/p_1_out_carry__4/CO[3]
-                         net (fo=1, unplaced)         0.000     7.668    keychain/expmod/modulus_block/p_1_out_carry__4_n_0
-                         CARRY4 (Prop_carry4_CI_CO[3])
-                                                      0.114     7.782 r  keychain/expmod/modulus_block/p_1_out_carry__5/CO[3]
-                         net (fo=1, unplaced)         0.000     7.782    keychain/expmod/modulus_block/p_1_out_carry__5_n_0
-                         CARRY4 (Prop_carry4_CI_O[3])
-                                                      0.329     8.111 r  keychain/expmod/modulus_block/p_1_out_carry__6/O[3]
-                         net (fo=1, unplaced)         0.618     8.729    keychain/expmod/modulus_block/p_1_in[31]
-                         LUT3 (Prop_lut3_I0_O)        0.307     9.036 r  keychain/expmod/modulus_block/intermediate[32][31]_i_2/O
-                         net (fo=32, unplaced)        0.000     9.036    keychain/expmod/modulus_block/intermediate1_in[31]
-                         FDRE                                         r  keychain/expmod/modulus_block/intermediate_reg[10][31]/D
-  -------------------------------------------------------------------    -------------------
-
-                         (clock gclk rise edge)      10.000    10.000 r  
-    N15                                               0.000    10.000 r  clk_100mhz (IN)
-                         net (fo=0)                   0.000    10.000    clk_100mhz
-    N15                  IBUF (Prop_ibuf_I_O)         1.370    11.370 r  clk_100mhz_IBUF_inst/O
-                         net (fo=1, unplaced)         0.760    12.130    clk_100mhz_IBUF
-                         BUFG (Prop_bufg_I_O)         0.091    12.221 r  clk_100mhz_IBUF_BUFG_inst/O
-                         net (fo=1790, unplaced)      0.439    12.660    keychain/expmod/modulus_block/clk_100mhz_IBUF_BUFG
-                         FDRE                                         r  keychain/expmod/modulus_block/intermediate_reg[10][31]/C
-                         clock pessimism              0.115    12.775    
-                         clock uncertainty           -0.035    12.740    
-                         FDRE (Setup_fdre_C_D)        0.029    12.769    keychain/expmod/modulus_block/intermediate_reg[10][31]
-  -------------------------------------------------------------------
-                         required time                         12.769    
-                         arrival time                          -9.036    
-  -------------------------------------------------------------------
-                         slack                                  3.733    
-
-
-
-
-
-Min Delay Paths
---------------------------------------------------------------------------------------
-Slack (MET) :             0.129ns  (arrival time - required time)
-  Source:                 keychain/expmod/multiplier/result_1_reg[31]/C
-                            (rising edge-triggered cell FDRE clocked by gclk  {rise@0.000ns fall@4.000ns period=10.000ns})
-  Destination:            keychain/expmod/multiplier/result_1_reg[31]/D
-                            (rising edge-triggered cell FDRE clocked by gclk  {rise@0.000ns fall@4.000ns period=10.000ns})
-  Path Group:             gclk
-  Path Type:              Hold (Min at Fast Process Corner)
-  Requirement:            0.000ns  (gclk rise@0.000ns - gclk rise@0.000ns)
-  Data Path Delay:        0.379ns  (logic 0.249ns (65.656%)  route 0.130ns (34.344%))
-  Logic Levels:           2  (CARRY4=1 LUT2=1)
-  Clock Path Skew:        0.145ns (DCD - SCD - CPR)
-    Destination Clock Delay (DCD):    1.039ns
-    Source Clock Delay      (SCD):    0.686ns
-    Clock Pessimism Removal (CPR):    0.208ns
-
-    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
-  -------------------------------------------------------------------    -------------------
-                         (clock gclk rise edge)       0.000     0.000 r  
-    N15                                               0.000     0.000 r  clk_100mhz (IN)
-                         net (fo=0)                   0.000     0.000    clk_100mhz
-    N15                  IBUF (Prop_ibuf_I_O)         0.209     0.209 r  clk_100mhz_IBUF_inst/O
-                         net (fo=1, unplaced)         0.337     0.546    clk_100mhz_IBUF
-                         BUFG (Prop_bufg_I_O)         0.026     0.572 r  clk_100mhz_IBUF_BUFG_inst/O
-                         net (fo=1790, unplaced)      0.114     0.686    keychain/expmod/multiplier/clk_100mhz_IBUF_BUFG
-                         FDRE                                         r  keychain/expmod/multiplier/result_1_reg[31]/C
-  -------------------------------------------------------------------    -------------------
-                         FDRE (Prop_fdre_C_Q)         0.141     0.827 r  keychain/expmod/multiplier/result_1_reg[31]/Q
-                         net (fo=2, unplaced)         0.130     0.957    keychain/expmod/multiplier/result_1_reg[31]
-                         LUT2 (Prop_lut2_I1_O)        0.045     1.002 r  keychain/expmod/multiplier/result_1[28]_i_5/O
-                         net (fo=1, unplaced)         0.000     1.002    keychain/expmod/multiplier/result_1[28]_i_5_n_0
-                         CARRY4 (Prop_carry4_S[3]_O[3])
-                                                      0.063     1.065 r  keychain/expmod/multiplier/result_1_reg[28]_i_1/O[3]
-                         net (fo=1, unplaced)         0.000     1.065    keychain/expmod/multiplier/result_1_reg[28]_i_1_n_4
-                         FDRE                                         r  keychain/expmod/multiplier/result_1_reg[31]/D
-  -------------------------------------------------------------------    -------------------
-
-                         (clock gclk rise edge)       0.000     0.000 r  
-    N15                                               0.000     0.000 r  clk_100mhz (IN)
-                         net (fo=0)                   0.000     0.000    clk_100mhz
-    N15                  IBUF (Prop_ibuf_I_O)         0.396     0.396 r  clk_100mhz_IBUF_inst/O
-                         net (fo=1, unplaced)         0.355     0.751    clk_100mhz_IBUF
-                         BUFG (Prop_bufg_I_O)         0.029     0.780 r  clk_100mhz_IBUF_BUFG_inst/O
-                         net (fo=1790, unplaced)      0.259     1.039    keychain/expmod/multiplier/clk_100mhz_IBUF_BUFG
-                         FDRE                                         r  keychain/expmod/multiplier/result_1_reg[31]/C
-                         clock pessimism             -0.208     0.831    
-                         FDRE (Hold_fdre_C_D)         0.105     0.936    keychain/expmod/multiplier/result_1_reg[31]
-  -------------------------------------------------------------------
-                         required time                         -0.936    
-                         arrival time                           1.065    
-  -------------------------------------------------------------------
-                         slack                                  0.129    
-
-
-
 
 
 Pulse Width Checks
@@ -356,10 +209,249 @@ Waveform(ns):       { 0.000 4.000 }
 Period(ns):         10.000
 Sources:            { clk_100mhz }
 
-Check Type        Corner  Lib Pin  Reference Pin  Required(ns)  Actual(ns)  Slack(ns)  Location  Pin
-Min Period        n/a     BUFG/I   n/a            2.155         10.000      7.845                clk_100mhz_IBUF_BUFG_inst/I
-Low Pulse Width   Slow    FDRE/C   n/a            0.500         6.000       5.500                led_reg[0]/C
-High Pulse Width  Slow    FDRE/C   n/a            0.500         4.000       3.500                led_reg[0]/C
+Check Type        Corner  Lib Pin            Reference Pin  Required(ns)  Actual(ns)  Slack(ns)  Location  Pin
+Min Period        n/a     MMCME2_ADV/CLKIN1  n/a            1.249         10.000      8.751                clock_wizard/inst/mmcm_adv_inst/CLKIN1
+Max Period        n/a     MMCME2_ADV/CLKIN1  n/a            100.000       10.000      90.000               clock_wizard/inst/mmcm_adv_inst/CLKIN1
+Low Pulse Width   Slow    MMCME2_ADV/CLKIN1  n/a            2.000         6.000       4.000                clock_wizard/inst/mmcm_adv_inst/CLKIN1
+High Pulse Width  Slow    MMCME2_ADV/CLKIN1  n/a            2.000         4.000       2.000                clock_wizard/inst/mmcm_adv_inst/CLKIN1
+
+
+
+---------------------------------------------------------------------------------------------------
+From Clock:  clk_out1_clk_wiz_0
+  To Clock:  clk_out1_clk_wiz_0
+
+Setup :            0  Failing Endpoints,  Worst Slack       91.974ns,  Total Violation        0.000ns
+Hold  :            0  Failing Endpoints,  Worst Slack        0.129ns,  Total Violation        0.000ns
+PW    :            0  Failing Endpoints,  Worst Slack       49.500ns,  Total Violation        0.000ns
+---------------------------------------------------------------------------------------------------
+
+
+Max Delay Paths
+--------------------------------------------------------------------------------------
+Slack (MET) :             91.974ns  (required time - arrival time)
+  Source:                 keychain/expmod/modulus_block/intermediate_reg[23][1]/C
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            keychain/expmod/modulus_block/intermediate_reg[10][63]/D
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             clk_out1_clk_wiz_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            100.000ns  (clk_out1_clk_wiz_0 rise@100.000ns - clk_out1_clk_wiz_0 rise@0.000ns)
+  Data Path Delay:        7.770ns  (logic 4.157ns (53.501%)  route 3.613ns (46.499%))
+  Logic Levels:           21  (CARRY4=16 LUT3=1 LUT5=1 LUT6=2 MUXF7=1)
+  Clock Path Skew:        -0.145ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    -2.279ns = ( 97.721 - 100.000 ) 
+    Source Clock Delay      (SCD):    -1.604ns
+    Clock Pessimism Removal (CPR):    0.530ns
+  Clock Uncertainty:      0.140ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.270ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                      0.000     0.000 r  
+    N15                                               0.000     0.000 r  clk_100mhz (IN)
+                         net (fo=0)                   0.000     0.000    clock_wizard/inst/clk_100mhz
+    N15                  IBUF (Prop_ibuf_I_O)         1.440     1.440 r  clock_wizard/inst/clkin1_ibufg/O
+                         net (fo=1, unplaced)         0.584     2.024    clock_wizard/inst/clk_in1_clk_wiz_0
+                         MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -5.108    -3.083 r  clock_wizard/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, unplaced)         0.800    -2.284    clock_wizard/inst/clk_out1_clk_wiz_0
+                         BUFG (Prop_bufg_I_O)         0.096    -2.188 r  clock_wizard/inst/clkout1_buf/O
+                         net (fo=6029, unplaced)      0.584    -1.604    keychain/expmod/modulus_block/clk_out1
+                         FDRE                                         r  keychain/expmod/modulus_block/intermediate_reg[23][1]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_fdre_C_Q)         0.456    -1.148 r  keychain/expmod/modulus_block/intermediate_reg[23][1]/Q
+                         net (fo=1, unplaced)         0.965    -0.183    keychain/expmod/modulus_block/intermediate_reg_n_0_[23][1]
+                         LUT6 (Prop_lut6_I0_O)        0.295     0.112 r  keychain/expmod/modulus_block/intermediate[64][1]_i_24/O
+                         net (fo=1, unplaced)         0.000     0.112    keychain/expmod/modulus_block/intermediate[64][1]_i_24_n_0
+                         MUXF7 (Prop_muxf7_I1_O)      0.245     0.357 r  keychain/expmod/modulus_block/intermediate_reg[64][1]_i_10/O
+                         net (fo=1, unplaced)         0.905     1.262    keychain/expmod/modulus_block/intermediate_reg[64][1]_i_10_n_0
+                         LUT6 (Prop_lut6_I1_O)        0.298     1.560 r  keychain/expmod/modulus_block/intermediate[64][1]_i_4/O
+                         net (fo=1, unplaced)         0.449     2.009    keychain/expmod/modulus_block/intermediate[64][1]_i_4_n_0
+                         LUT5 (Prop_lut5_I4_O)        0.124     2.133 r  keychain/expmod/modulus_block/intermediate[64][1]_i_2/O
+                         net (fo=5, unplaced)         0.667     2.800    keychain/expmod/modulus_block/intermediate[64][1]_i_2_n_0
+                         CARRY4 (Prop_carry4_DI[1]_CO[3])
+                                                      0.507     3.307 r  keychain/expmod/modulus_block/intermediate_reg[64][3]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.009     3.316    keychain/expmod/modulus_block/intermediate_reg[64][3]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     3.430 r  keychain/expmod/modulus_block/intermediate_reg[64][7]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     3.430    keychain/expmod/modulus_block/intermediate_reg[64][7]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     3.544 r  keychain/expmod/modulus_block/intermediate_reg[64][11]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     3.544    keychain/expmod/modulus_block/intermediate_reg[64][11]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     3.658 r  keychain/expmod/modulus_block/intermediate_reg[64][15]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     3.658    keychain/expmod/modulus_block/intermediate_reg[64][15]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     3.772 r  keychain/expmod/modulus_block/intermediate_reg[64][19]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     3.772    keychain/expmod/modulus_block/intermediate_reg[64][19]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     3.886 r  keychain/expmod/modulus_block/intermediate_reg[64][23]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     3.886    keychain/expmod/modulus_block/intermediate_reg[64][23]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     4.000 r  keychain/expmod/modulus_block/intermediate_reg[64][27]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     4.000    keychain/expmod/modulus_block/intermediate_reg[64][27]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     4.114 r  keychain/expmod/modulus_block/intermediate_reg[64][31]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     4.114    keychain/expmod/modulus_block/intermediate_reg[64][31]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     4.228 r  keychain/expmod/modulus_block/intermediate_reg[64][35]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     4.228    keychain/expmod/modulus_block/intermediate_reg[64][35]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     4.342 r  keychain/expmod/modulus_block/intermediate_reg[64][39]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     4.342    keychain/expmod/modulus_block/intermediate_reg[64][39]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     4.456 r  keychain/expmod/modulus_block/intermediate_reg[64][43]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     4.456    keychain/expmod/modulus_block/intermediate_reg[64][43]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     4.570 r  keychain/expmod/modulus_block/intermediate_reg[64][47]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     4.570    keychain/expmod/modulus_block/intermediate_reg[64][47]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     4.684 r  keychain/expmod/modulus_block/intermediate_reg[64][51]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     4.684    keychain/expmod/modulus_block/intermediate_reg[64][51]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     4.798 r  keychain/expmod/modulus_block/intermediate_reg[64][55]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     4.798    keychain/expmod/modulus_block/intermediate_reg[64][55]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.114     4.912 r  keychain/expmod/modulus_block/intermediate_reg[64][59]_i_2/CO[3]
+                         net (fo=1, unplaced)         0.000     4.912    keychain/expmod/modulus_block/intermediate_reg[64][59]_i_2_n_0
+                         CARRY4 (Prop_carry4_CI_O[3])
+                                                      0.329     5.241 r  keychain/expmod/modulus_block/intermediate_reg[64][63]_i_5/O[3]
+                         net (fo=1, unplaced)         0.618     5.859    keychain/expmod/modulus_block/p_1_in[63]
+                         LUT3 (Prop_lut3_I0_O)        0.307     6.166 r  keychain/expmod/modulus_block/intermediate[64][63]_i_2/O
+                         net (fo=64, unplaced)        0.000     6.166    keychain/expmod/modulus_block/intermediate1_in[63]
+                         FDRE                                         r  keychain/expmod/modulus_block/intermediate_reg[10][63]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                    100.000   100.000 r  
+    N15                                               0.000   100.000 r  clk_100mhz (IN)
+                         net (fo=0)                   0.000   100.000    clock_wizard/inst/clk_100mhz
+    N15                  IBUF (Prop_ibuf_I_O)         1.370   101.370 r  clock_wizard/inst/clkin1_ibufg/O
+                         net (fo=1, unplaced)         0.439   101.809    clock_wizard/inst/clk_in1_clk_wiz_0
+                         MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -5.378    96.431 r  clock_wizard/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, unplaced)         0.760    97.191    clock_wizard/inst/clk_out1_clk_wiz_0
+                         BUFG (Prop_bufg_I_O)         0.091    97.282 r  clock_wizard/inst/clkout1_buf/O
+                         net (fo=6029, unplaced)      0.439    97.721    keychain/expmod/modulus_block/clk_out1
+                         FDRE                                         r  keychain/expmod/modulus_block/intermediate_reg[10][63]/C
+                         clock pessimism              0.530    98.251    
+                         clock uncertainty           -0.140    98.112    
+                         FDRE (Setup_fdre_C_D)        0.029    98.141    keychain/expmod/modulus_block/intermediate_reg[10][63]
+  -------------------------------------------------------------------
+                         required time                         98.141    
+                         arrival time                          -6.166    
+  -------------------------------------------------------------------
+                         slack                                 91.974    
+
+
+
+
+
+Min Delay Paths
+--------------------------------------------------------------------------------------
+Slack (MET) :             0.129ns  (arrival time - required time)
+  Source:                 keychain/expmod/multiplier/result_1_reg[63]/C
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Destination:            keychain/expmod/multiplier/result_1_reg[63]/D
+                            (rising edge-triggered cell FDRE clocked by clk_out1_clk_wiz_0  {rise@0.000ns fall@50.000ns period=100.000ns})
+  Path Group:             clk_out1_clk_wiz_0
+  Path Type:              Hold (Min at Fast Process Corner)
+  Requirement:            0.000ns  (clk_out1_clk_wiz_0 rise@0.000ns - clk_out1_clk_wiz_0 rise@0.000ns)
+  Data Path Delay:        0.379ns  (logic 0.249ns (65.656%)  route 0.130ns (34.344%))
+  Logic Levels:           2  (CARRY4=1 LUT2=1)
+  Clock Path Skew:        0.145ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    -1.112ns
+    Source Clock Delay      (SCD):    -0.976ns
+    Clock Pessimism Removal (CPR):    -0.281ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                      0.000     0.000 r  
+    N15                                               0.000     0.000 r  clk_100mhz (IN)
+                         net (fo=0)                   0.000     0.000    clock_wizard/inst/clk_100mhz
+    N15                  IBUF (Prop_ibuf_I_O)         0.209     0.209 r  clock_wizard/inst/clkin1_ibufg/O
+                         net (fo=1, unplaced)         0.114     0.323    clock_wizard/inst/clk_in1_clk_wiz_0
+                         MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -1.776    -1.454 r  clock_wizard/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, unplaced)         0.337    -1.116    clock_wizard/inst/clk_out1_clk_wiz_0
+                         BUFG (Prop_bufg_I_O)         0.026    -1.090 r  clock_wizard/inst/clkout1_buf/O
+                         net (fo=6029, unplaced)      0.114    -0.976    keychain/expmod/multiplier/clk_out1
+                         FDRE                                         r  keychain/expmod/multiplier/result_1_reg[63]/C
+  -------------------------------------------------------------------    -------------------
+                         FDRE (Prop_fdre_C_Q)         0.141    -0.835 r  keychain/expmod/multiplier/result_1_reg[63]/Q
+                         net (fo=2, unplaced)         0.130    -0.705    keychain/expmod/multiplier/result_1_reg[63]
+                         LUT2 (Prop_lut2_I1_O)        0.045    -0.660 r  keychain/expmod/multiplier/result_1[60]_i_5/O
+                         net (fo=1, unplaced)         0.000    -0.660    keychain/expmod/multiplier/result_1[60]_i_5_n_0
+                         CARRY4 (Prop_carry4_S[3]_O[3])
+                                                      0.063    -0.597 r  keychain/expmod/multiplier/result_1_reg[60]_i_1/O[3]
+                         net (fo=1, unplaced)         0.000    -0.597    keychain/expmod/multiplier/result_1_reg[60]_i_1_n_4
+                         FDRE                                         r  keychain/expmod/multiplier/result_1_reg[63]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_out1_clk_wiz_0 rise edge)
+                                                      0.000     0.000 r  
+    N15                                               0.000     0.000 r  clk_100mhz (IN)
+                         net (fo=0)                   0.000     0.000    clock_wizard/inst/clk_100mhz
+    N15                  IBUF (Prop_ibuf_I_O)         0.396     0.396 r  clock_wizard/inst/clkin1_ibufg/O
+                         net (fo=1, unplaced)         0.259     0.655    clock_wizard/inst/clk_in1_clk_wiz_0
+                         MMCME2_ADV (Prop_mmcme2_adv_CLKIN1_CLKOUT0)
+                                                     -2.410    -1.755 r  clock_wizard/inst/mmcm_adv_inst/CLKOUT0
+                         net (fo=1, unplaced)         0.355    -1.400    clock_wizard/inst/clk_out1_clk_wiz_0
+                         BUFG (Prop_bufg_I_O)         0.029    -1.371 r  clock_wizard/inst/clkout1_buf/O
+                         net (fo=6029, unplaced)      0.259    -1.112    keychain/expmod/multiplier/clk_out1
+                         FDRE                                         r  keychain/expmod/multiplier/result_1_reg[63]/C
+                         clock pessimism              0.281    -0.831    
+                         FDRE (Hold_fdre_C_D)         0.105    -0.726    keychain/expmod/multiplier/result_1_reg[63]
+  -------------------------------------------------------------------
+                         required time                          0.726    
+                         arrival time                          -0.597    
+  -------------------------------------------------------------------
+                         slack                                  0.129    
+
+
+
+
+
+Pulse Width Checks
+--------------------------------------------------------------------------------------
+Clock Name:         clk_out1_clk_wiz_0
+Waveform(ns):       { 0.000 50.000 }
+Period(ns):         100.000
+Sources:            { clock_wizard/inst/mmcm_adv_inst/CLKOUT0 }
+
+Check Type        Corner  Lib Pin             Reference Pin  Required(ns)  Actual(ns)  Slack(ns)  Location  Pin
+Min Period        n/a     BUFG/I              n/a            2.155         100.000     97.845               clock_wizard/inst/clkout1_buf/I
+Max Period        n/a     MMCME2_ADV/CLKOUT0  n/a            213.360       100.000     113.360              clock_wizard/inst/mmcm_adv_inst/CLKOUT0
+Low Pulse Width   Slow    FDRE/C              n/a            0.500         50.000      49.500               led_reg[0]/C
+High Pulse Width  Slow    FDRE/C              n/a            0.500         50.000      49.500               led_reg[0]/C
+
+
+
+---------------------------------------------------------------------------------------------------
+From Clock:  clkfbout_clk_wiz_0
+  To Clock:  clkfbout_clk_wiz_0
+
+Setup :           NA  Failing Endpoints,  Worst Slack           NA  ,  Total Violation           NA
+Hold  :           NA  Failing Endpoints,  Worst Slack           NA  ,  Total Violation           NA
+PW    :            0  Failing Endpoints,  Worst Slack       17.845ns,  Total Violation        0.000ns
+---------------------------------------------------------------------------------------------------
+
+
+Pulse Width Checks
+--------------------------------------------------------------------------------------
+Clock Name:         clkfbout_clk_wiz_0
+Waveform(ns):       { 0.000 10.000 }
+Period(ns):         20.000
+Sources:            { clock_wizard/inst/mmcm_adv_inst/CLKFBOUT }
+
+Check Type  Corner  Lib Pin             Reference Pin  Required(ns)  Actual(ns)  Slack(ns)  Location  Pin
+Min Period  n/a     BUFG/I              n/a            2.155         20.000      17.845               clock_wizard/inst/clkf_buf/I
+Max Period  n/a     MMCME2_ADV/CLKFBIN  n/a            100.000       20.000      80.000               clock_wizard/inst/mmcm_adv_inst/CLKFBIN
 
 
 

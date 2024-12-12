@@ -1,8 +1,8 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2024.1 (lin64) Build 5076996 Wed May 22 18:36:09 MDT 2024
-| Date         : Tue Dec 10 22:08:45 2024
-| Host         : joseph-legion5 running 64-bit Linux Mint 22
+| Date         : Wed Dec 11 19:21:45 2024
+| Host         : eecs-digital-45 running 64-bit Ubuntu 24.04.1 LTS
 | Command      : report_utilization -file obj/post_synth_util.rpt -hierarchical -hierarchical_depth 4
 | Design       : top_level
 | Device       : xc7s50csga324-1
@@ -19,23 +19,25 @@ Table of Contents
 1. Utilization by Hierarchy
 ---------------------------
 
-+---------------------+------------------+------------+------------+---------+------+------+--------+--------+------------+
-|       Instance      |      Module      | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | DSP Blocks |
-+---------------------+------------------+------------+------------+---------+------+------+--------+--------+------------+
-| top_level           |            (top) |        996 |        996 |       0 |    0 | 1790 |      0 |      0 |          0 |
-|   (top_level)       |            (top) |          0 |          0 |       0 |    0 |    1 |      0 |      0 |          0 |
-|   keychain          |         keychain |        996 |        996 |       0 |    0 | 1789 |      0 |      0 |          0 |
-|     (keychain)      |         keychain |          0 |          0 |       0 |    0 |    2 |      0 |      0 |          0 |
-|     expmod          | exponent_modulus |        897 |        897 |       0 |    0 | 1613 |      0 |      0 |          0 |
-|       (expmod)      | exponent_modulus |        109 |        109 |       0 |    0 |  355 |      0 |      0 |          0 |
-|       modulus_block |          modulus |        560 |        560 |       0 |    0 | 1133 |      0 |      0 |          0 |
-|       multiplier    |      simple_mult |        228 |        228 |       0 |    0 |  125 |      0 |      0 |          0 |
-|     receive         |     deserializer |         63 |         63 |       0 |    0 |  121 |      0 |      0 |          0 |
-|       (receive)     |     deserializer |         15 |         15 |       0 |    0 |   85 |      0 |      0 |          0 |
-|       receiver      |     uart_receive |         48 |         48 |       0 |    0 |   36 |      0 |      0 |          0 |
-|     transmit        |       serializer |         36 |         36 |       0 |    0 |   53 |      0 |      0 |          0 |
-|       (transmit)    |       serializer |          5 |          5 |       0 |    0 |   28 |      0 |      0 |          0 |
-|       transmitter   |    uart_transmit |         31 |         31 |       0 |    0 |   25 |      0 |      0 |          0 |
-+---------------------+------------------+------------+------------+---------+------+------+--------+--------+------------+
++---------------------+-------------------+------------+------------+---------+------+------+--------+--------+------------+
+|       Instance      |       Module      | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | DSP Blocks |
++---------------------+-------------------+------------+------------+---------+------+------+--------+--------+------------+
+| top_level           |             (top) |       2693 |       2693 |       0 |    0 | 6029 |      0 |      0 |          0 |
+|   (top_level)       |             (top) |          0 |          0 |       0 |    0 |    1 |      0 |      0 |          0 |
+|   clock_wizard      |         clk_wiz_0 |          0 |          0 |       0 |    0 |    0 |      0 |      0 |          0 |
+|     inst            | clk_wiz_0_clk_wiz |          0 |          0 |       0 |    0 |    0 |      0 |      0 |          0 |
+|   keychain          |          keychain |       2693 |       2693 |       0 |    0 | 6028 |      0 |      0 |          0 |
+|     (keychain)      |          keychain |          7 |          7 |       0 |    0 |    2 |      0 |      0 |          0 |
+|     expmod          |  exponent_modulus |       2540 |       2540 |       0 |    0 | 5759 |      0 |      0 |          0 |
+|       (expmod)      |  exponent_modulus |        385 |        385 |       0 |    0 | 1212 |      0 |      0 |          0 |
+|       modulus_block |           modulus |       1706 |       1706 |       0 |    0 | 4306 |      0 |      0 |          0 |
+|       multiplier    |       simple_mult |        449 |        449 |       0 |    0 |  241 |      0 |      0 |          0 |
+|     receive         |      deserializer |        105 |        105 |       0 |    0 |  199 |      0 |      0 |          0 |
+|       (receive)     |      deserializer |         62 |         62 |       0 |    0 |  166 |      0 |      0 |          0 |
+|       receiver      |      uart_receive |         43 |         43 |       0 |    0 |   33 |      0 |      0 |          0 |
+|     transmit        |        serializer |         41 |         41 |       0 |    0 |   68 |      0 |      0 |          0 |
+|       (transmit)    |        serializer |         10 |         10 |       0 |    0 |   45 |      0 |      0 |          0 |
+|       transmitter   |     uart_transmit |         31 |         31 |       0 |    0 |   23 |      0 |      0 |          0 |
++---------------------+-------------------+------------+------------+---------+------+------+--------+--------+------------+
 
 
