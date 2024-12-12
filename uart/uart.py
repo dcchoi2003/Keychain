@@ -4,14 +4,17 @@ import serial
 from random import randint
 import time
 
-PORTNAME = "/dev/ttyUSB1"
+# PORTNAME = "/dev/ttyUSB1"
+PORTNAME = "/dev/cu.usbserial-88742923009F1"
 BAUD = 115200
 
-MSG_WIDTH = 8
-KEY_WIDTH = 16
+MSG_WIDTH = 2
+KEY_WIDTH = 4
 
-MAX_KEY_SIZE = pow(2, KEY_WIDTH)
-MAX_MSG_SIZE = pow(2, MSG_WIDTH)
+# MAX_KEY_SIZE = pow(2, KEY_WIDTH)
+MAX_KEY_SIZE = pow(2, KEY_WIDTH * 8)
+# MAX_MSG_SIZE = pow(2, MSG_WIDTH)
+MAX_MSG_SIZE = pow(2, MSG_WIDTH * 8)
 
 def send(ser, msg, key, mod):
     msg_str = msg.to_bytes(MSG_WIDTH, "little")
@@ -23,11 +26,17 @@ def send(ser, msg, key, mod):
     ser.write(msg_str)
 
 def recv(ser):
-    time.sleep(0.1)
+    # time.sleep(0.2)
 
-    bytestr = ser.read(MSG_WIDTH + 2*KEY_WIDTH)
+    # bytestr = ser.read(MSG_WIDTH + 2*KEY_WIDTH)
 
-    return int.from_str(bytestr, "little")
+    bytestr = ser.read(KEY_WIDTH)
+
+    # return bytestr
+
+    print(bytestr)
+
+    return int.from_bytes(bytestr, "little")
 
 if __name__ == "__main__":
     exponent = randint(1, MAX_KEY_SIZE)
