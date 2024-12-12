@@ -39,7 +39,7 @@ module top_level (
     clk_wiz_0 clock_wizard (
         .clk_in1(clk_100mhz),
         .clk_out1(clk_10mhz),
-        .reset(sys_rst),
+        .reset(0),
         .locked()
     );
 
@@ -54,8 +54,8 @@ module top_level (
 
     // Hook up Keychain
     keychain #(
-        .KEY_BYTES(2),
-        .MSG_BYTES(1),
+        .KEY_BYTES(8),
+        .MSG_BYTES(4),
         .BAUD_RATE(115_200)
     ) keychain (
         .clk_in(clk_10mhz),

@@ -37,6 +37,9 @@ module deserializer #(
     // UART Receiver control signal
     logic uart_valid;
 
+    // BRAM output for secret key
+    logic [8*KEY_BYTES-1:0] douta;
+
     // UART Receiver
     uart_receive #(
         .BAUD_RATE(BAUD_RATE),
@@ -109,6 +112,22 @@ module deserializer #(
             valid_out <= 1'b0;
         end
     end
+
+      xilinx_single_port_ram_read_first #(
+    .RAM_WIDTH(KEY_BYTES * 8),                       // Specify RAM data width
+    .RAM_DEPTH(1),                     // Specify RAM depth (number of entries)
+    .RAM_PERFORMANCE("HIGH_PERFORMANCE"), // Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
+    .INIT_FILE(`FPATH(secret_key.mem))          // Specify name/location of RAM initialization file if using one (leave blank if not)
+      ) secret_key (
+    .addra(0),     // Address bus, width determined from RAM_DEPTH
+    .dina(KEY_BYTES * 8),       // RAM input data, width determined from RAM_WIDTH
+    .clka(clk_in),       // Clock
+    .wea(0),         // Write enable
+    .ena(1'b1),         // RAM Enable, for additional power savings, disable port when not in use
+    .rsta(rst_in),       // Output reset (does not affect memory contents)
+    .regcea(1'b1),   // Output register enable
+    .douta(douta)      // RAM output data, width determined from RAM_WIDTH
+  );
 
 endmodule
 
